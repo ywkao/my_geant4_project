@@ -124,6 +124,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                     0,                       //copy number
                     checkOverlaps);          //overlaps checking
 
+  G4Material* material_silicon = nist->FindOrBuildMaterial("G4_Si");
   //
   // Shape 1
   //
@@ -146,14 +147,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                         shape1_mat,          //its material
                         "Shape1");           //its name
 
-  new G4PVPlacement(0,                       //no rotation
-                    pos1,                    //at position
-                    logicShape1,             //its logical volume
-                    "Shape1",                //its name
-                    logicEnv,                //its mother  volume
-                    false,                   //no boolean operation
-                    0,                       //copy number
-                    checkOverlaps);          //overlaps checking
+  //new G4PVPlacement(0,                       //no rotation
+  //                  pos1,                    //at position
+  //                  logicShape1,             //its logical volume
+  //                  "Shape1",                //its name
+  //                  logicEnv,                //its mother  volume
+  //                  false,                   //no boolean operation
+  //                  0,                       //copy number
+  //                  checkOverlaps);          //overlaps checking
 
   //
   // Shape 2
@@ -175,56 +176,66 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                         shape2_mat,          //its material
                         "Shape2");           //its name
 
-  new G4PVPlacement(0,                       //no rotation
-                    pos2,                    //at position
-                    logicShape2,             //its logical volume
-                    "Shape2",                //its name
-                    logicEnv,                //its mother  volume
-                    false,                   //no boolean operation
-                    1,                       //copy number
-                    checkOverlaps);          //overlaps checking
+  //new G4PVPlacement(0,                       //no rotation
+  //                  pos2,                    //at position
+  //                  logicShape2,             //its logical volume
+  //                  "Shape2",                //its name
+  //                  logicEnv,                //its mother  volume
+  //                  false,                   //no boolean operation
+  //                  1,                       //copy number
+  //                  checkOverlaps);          //overlaps checking
 
   // Set Shape2 as scoring volume
   //
   fScoringVolume = logicShape2;
 
 
-  //disc
+  //++++++++++++++++++++
+  // disc
+  //++++++++++++++++++++
   // c. Create a target disc (a full tube), defining first its dimensions:
-   G4double discZLength = 1.*mm; //0.5*mm;
+   G4double discZLength = 0.1*mm;
    G4double discRadius  = 3*cm;
-   G4VSolid* targetDisc 
-     = new G4Tubs("disc-Target",    // name
-   		 0,                // minimum radius, 0 == full-tube
-   		 discRadius,       // maximum radius
-   		 0.5*discZLength,  // Z halxof-length
-   		 0,                // start-Phi angle
-   		 twopi*rad);       // delta-Phi angle,
-   // 2*pi == unsegmented tube
-   G4LogicalVolume* discLogical
-     = new G4LogicalVolume(targetDisc,      // solid
-   			  shape1_mat,  // material
-   			  "logic-Disc");   // name
-  
-  
-  //G4VPhysicalVolume* discPhysical =
-    new G4PVPlacement(nullptr,                 // (no) rotation
-    		     G4ThreeVector(0.5*cm, 0.5*cm, 0.5*cm), // translation
-    		     discLogical,             // its logical volume
-    		     "Disc",                  // its name
-    		     logicEnv,            // its mother volume
-    		     false,                   // not used
-    		     2,                       // copy number
-    		     true);                   // enable overlap check
 
-    new G4PVPlacement(nullptr,                 // (no) rotation
-    		     G4ThreeVector(0.5*cm, 0.5*cm, -0.5*cm), // translation
-    		     discLogical,             // its logical volume
-    		     "Disc",                  // its name
-    		     logicEnv,            // its mother volume
-    		     false,                   // not used
-    		     3,                       // copy number
-    		     true);                   // enable overlap check
+   // tube = name, min radius, max radius, z half length, start phi, delta phi
+   G4VSolid* tube 
+     = new G4Tubs("tube", 0, 2*discRadius, 0.5*env_sizeZ, 0, twopi*rad);
+   G4LogicalVolume* tube_log
+     = new G4LogicalVolume(tube, env_mat, "tubeL");   // name
+   //G4VPhysicalVolume* tube_phy =
+   //    new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.), tube_log, "tubeP", logicWorld, false, 2);
+  
+   G4VSolid* disc 
+     = new G4Tubs("disc-Target", 0, discRadius, discZLength, 0, twopi*rad);
+   G4LogicalVolume* disc_log
+     = new G4LogicalVolume(disc, material_silicon, "logic-Disc");
+   //G4VPhysicalVolume* discPhysical =
+   //    new G4PVReplica("detector", disc_log, tube_log, kZAxis, 4, discZLength*1.1);
+
+     G4double init_position = -2.25*cm;
+     for(int i=0; i<10; ++i) {
+         G4double increment = (double)i * 0.5*cm;
+         G4double zposition = init_position + increment;
+         new G4PVPlacement(nullptr, G4ThreeVector(0.5*cm, 0.5*cm, zposition), disc_log, "Disc", logicEnv, false, i+2, true);
+     }
+
+    // //new G4PVPlacement(nullptr,                 // (no) rotation
+    // //		     G4ThreeVector(0.5*cm, 0.5*cm, 0.5*cm), // translation
+    // //		     disc_log,             // its logical volume
+    // //		     "Disc",                  // its name
+    // //		     logicEnv,            // its mother volume
+    // //		     false,                   // not used
+    // //		     2,                       // copy number
+    // //		     true);                   // enable overlap check
+
+    // //new G4PVPlacement(nullptr,                 // (no) rotation
+    // //		     G4ThreeVector(0.5*cm, 0.5*cm, -0.5*cm), // translation
+    // //		     disc_log,             // its logical volume
+    // //		     "Disc",                  // its name
+    // //		     logicEnv,            // its mother volume
+    // //		     false,                   // not used
+    // //		     3,                       // copy number
+    // //		     true);                   // enable overlap check
 
 
   //

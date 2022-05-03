@@ -114,3 +114,16 @@
 #
 # For file-based drivers, use this to create an empty detector view:
 #/vis/viewer/flush
+
+# ------------------------------------------------------------------------------
+# Set particle gun
+/gun/particle mu- 
+/gun/particle proton 
+/gun/energy 1 GeV
+/gun/position 0.0 0.0 -2.5 cm
+/gun/direction 0. 0. 1.
+
+#/tracker/generator/momentum 1 GeV
+#/tracker/generator/sigmaAngle 0 deg
+
+/run/beamOn 1
