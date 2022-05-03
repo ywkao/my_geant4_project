@@ -96,31 +96,41 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   fScoringVolume = logicEnv;
 
   //++++++++++++++++++++
+  // box 
+  //++++++++++++++++++++
+  G4double box_sizeXY = 1*cm;
+  G4double box_sizeZ  = 1*cm;
+  G4Box* box = new G4Box("box", 0.5*box_sizeXY, 0.5*box_sizeXY, 0.5*box_sizeZ);
+  G4LogicalVolume* box_log = new G4LogicalVolume(box, material_silicon, "boxL");
+  new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.), box_log, "boxP", logicEnv, false, 2, true);
+  //G4VPhysicalVolume* box_rep = new G4PVReplica("detector", box_log, logicEnv, kZAxis, 4, box_sizeZ*1.1);
+
+  //++++++++++++++++++++
   // disc
   //++++++++++++++++++++
-  // c. Create a target disc (a full tube), defining first its dimensions:
-  G4double discZLength = 0.1*mm;
-  G4double discRadius  = 3*cm;
+  // // c. Create a target disc (a full tube), defining first its dimensions:
+  // G4double discZLength = 0.1*mm;
+  // G4double discRadius  = 3*cm;
 
-  // tube = name, min radius, max radius, z half length, start phi, delta phi
-  G4VSolid* tube = new G4Tubs("tube", 0, 2*discRadius, 0.5*env_sizeZ, 0, twopi*rad);
-  G4LogicalVolume* tube_log = new G4LogicalVolume(tube, env_mat, "tubeL");   // name
-  //new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.), tube_log, "tubeP", logicEnv, false, 2);
-  
-  G4VSolid* disc = new G4Tubs("disc-Target", 0, 0.5*discRadius, discZLength, 0, twopi*rad);
-  G4LogicalVolume* disc_log = new G4LogicalVolume(disc, material_silicon, "logic-Disc");
-  //new G4PVReplica("detector", disc_log, tube_log, kXAxis, 4, discZLength*1.1);
-  //new G4PVReplica("detector", disc_log, tube_log, kYAxis, 4, discZLength*1.1);
-  //new G4PVReplica("detector", disc_log, tube_log, kZAxis, 4, discZLength*1.1);
-  //new G4PVReplica("detector", disc_log, logicEnv, kZAxis, 4, discZLength*1.1);
-  //new G4PVReplica("detector", disc_log, physWorld, kZAxis, 4, discZLength*1.1);
+  // // tube = name, min radius, max radius, z half length, start phi, delta phi
+  // G4VSolid* tube = new G4Tubs("tube", 0, 2*discRadius, 0.5*env_sizeZ, 0, twopi*rad);
+  // G4LogicalVolume* tube_log = new G4LogicalVolume(tube, env_mat, "tubeL");   // name
+  // //new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.), tube_log, "tubeP", logicEnv, false, 2);
+  // 
+  // G4VSolid* disc = new G4Tubs("disc-Target", 0, 0.5*discRadius, discZLength, 0, twopi*rad);
+  // G4LogicalVolume* disc_log = new G4LogicalVolume(disc, material_silicon, "logic-Disc");
+  // //new G4PVReplica("detector", disc_log, tube_log, kXAxis, 4, discZLength*1.1);
+  // //new G4PVReplica("detector", disc_log, tube_log, kYAxis, 4, discZLength*1.1);
+  // //new G4PVReplica("detector", disc_log, tube_log, kZAxis, 4, discZLength*1.1);
+  // //new G4PVReplica("detector", disc_log, logicEnv, kZAxis, 4, discZLength*1.1);
+  // //new G4PVReplica("detector", disc_log, physWorld, kZAxis, 4, discZLength*1.1);
 
-  G4double init_position = -2.25*cm;
-  for(int i=0; i<10; ++i) {
-      G4double increment = (double)i * 0.5*cm;
-      G4double zposition = init_position + increment;
-      new G4PVPlacement(nullptr, G4ThreeVector(0.5*cm, 0.5*cm, zposition), disc_log, "Disc", logicEnv, false, i+2, true);
-  }
+  // //G4double init_position = -2.25*cm;
+  // //for(int i=0; i<10; ++i) {
+  // //    G4double increment = (double)i * 0.5*cm;
+  // //    G4double zposition = init_position + increment;
+  // //    new G4PVPlacement(nullptr, G4ThreeVector(0.5*cm, 0.5*cm, zposition), disc_log, "Disc", logicEnv, false, i+2, true);
+  // //}
 
   //++++++++++++++++++++++++++++++
   //always return the physical World
@@ -138,8 +148,9 @@ void DetectorConstruction::ConstructSDandField()
   // Setting aTrackerSD to all logical volumes with the same name
   // of "Chamber_LV".
   // SetSensitiveDetector("Shape1", aTrackerSD, true);
-  SetSensitiveDetector("logic-Disc", aTrackerSD, true);
   // SetSensitiveDetector("Shape2", aTrackerSD, true);
+  //SetSensitiveDetector("logic-Disc", aTrackerSD, true);
+  SetSensitiveDetector("boxL", aTrackerSD, true);
   
   // // Create global magnetic field messenger.
   // // Uniform magnetic field is then created automatically if
