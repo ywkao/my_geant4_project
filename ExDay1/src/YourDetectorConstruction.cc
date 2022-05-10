@@ -16,6 +16,7 @@
 // for having units and constants
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4PVReplica.hh"
 
 
 // Constructor
@@ -52,7 +53,7 @@ G4VPhysicalVolume* YourDetectorConstruction::Construct()
     // II. CREATE GEOMETRY:
 
     // a. Create the world (a box), defining first its size:
-    G4double worldXSize   = 1.1*cm;
+    G4double worldXSize   = 11*cm;
     G4double worldYZSize  = 1.25*worldXSize;
     G4Box* worldSolid
            = new G4Box("solid-World",    // name
@@ -75,24 +76,33 @@ G4VPhysicalVolume* YourDetectorConstruction::Construct()
     // ++++++++++++++++++++++++++ YOUR CODE FROM HERE ++++++++++++++++++++++++
     G4Box *mybox = new G4Box("mybox", 1.*mm, 2.*mm, 2.*mm);
     G4LogicalVolume *mylog = new G4LogicalVolume(mybox, materialWorld, "logic-Target");
-    G4VPhysicalVolume *myphy = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.), mylog, "myphy", worldLogical, false, 1);
+    //G4VPhysicalVolume *myphy = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.), mylog, "myphy", worldLogical, false, 1);
+
+    G4VPhysicalVolume *myphy = new G4PVReplica("detector", mylog, worldLogical, kXAxis, 10, 3.*mm);
+
+    //for(int i=0; i<10; ++i)
+    //{
+    //    G4double pos = (double) (i+1) *5.*mm;
+    //    new G4PVPlacement(nullptr, G4ThreeVector(0., pos, 0.), mylog, "myphy", worldLogical, false, i+2);
+    //}
+
     fTargetPhysical = myphy;
 
-    // translation
-    G4ThreeVector myVec(-2.*mm, 0., 0.);
+    // // translation
+    // G4ThreeVector myVec(-2.*mm, 0., 0.);
 
-    // u, v, w are the daughter axes, projected on the mother frame
-    G4double phi = 30*deg;
-    G4ThreeVector u = G4ThreeVector(0, 0, -1);
-    G4ThreeVector v = G4ThreeVector(-std::sin(phi), std::cos(phi),0.);
-    G4ThreeVector w = G4ThreeVector( std::cos(phi), std::sin(phi),0.);
-    G4RotationMatrix *myRotation  = new G4RotationMatrix(u, v, w);
-    G4cout << "\n --> phi = " << phi/deg << " deg;  direct rotation matrix : ";
-    myRotation->print(G4cout);
+    // // u, v, w are the daughter axes, projected on the mother frame
+    // G4double phi = 30*deg;
+    // G4ThreeVector u = G4ThreeVector(0, 0, -1);
+    // G4ThreeVector v = G4ThreeVector(-std::sin(phi), std::cos(phi),0.);
+    // G4ThreeVector w = G4ThreeVector( std::cos(phi), std::sin(phi),0.);
+    // G4RotationMatrix *myRotation  = new G4RotationMatrix(u, v, w);
+    // G4cout << "\n --> phi = " << phi/deg << " deg;  direct rotation matrix : ";
+    // myRotation->print(G4cout);
 
-    G4VSolid *pTubSolid = new G4Tubs("aTubSolid", 0.*mm, 1.*mm, 0.5*mm, 0., 6.28);
-    G4LogicalVolume *pTubLog = new G4LogicalVolume(pTubSolid, materialWorld, "aTubLog");
-    G4VPhysicalVolume *aTubPhys = new G4PVPlacement(myRotation, myVec, pTubLog, "aTubPhys", worldLogical, 0, 2);
+    // G4VSolid *pTubSolid = new G4Tubs("aTubSolid", 0.*mm, 1.*mm, 0.5*mm, 0., 6.28);
+    // G4LogicalVolume *pTubLog = new G4LogicalVolume(pTubSolid, materialWorld, "aTubLog");
+    // G4VPhysicalVolume *aTubPhys = new G4PVPlacement(myRotation, myVec, pTubLog, "aTubPhys", worldLogical, 0, 2);
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
