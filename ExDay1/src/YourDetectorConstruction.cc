@@ -36,56 +36,67 @@ YourDetectorConstruction::~YourDetectorConstruction()
 //
 G4VPhysicalVolume* YourDetectorConstruction::Construct()
 {
+    //------------------------------
     // I. CREATE MATERIALS:
+    //------------------------------
     // 1. Material for the world: low density hydrogen defined by "hand"
+    G4double pixel_size = 0.1*mm;
+    G4double pixel_thick = 0.05*mm;
+    G4double space = 1.1*pixel_size;
+
     G4double zet      = 1.0;
     G4double amass    = 1.01*g/mole;
     G4double density  = universe_mean_density;
     G4double pressure = 3.e-18*pascal;
     G4double tempture = 2.73*kelvin;
-    G4Material* materialWorld
-           = new G4Material("Galactic", zet, amass, density,
-                            kStateGas, tempture, pressure);
+    G4Material* materialWorld = new G4Material("Galactic", zet, amass, density, kStateGas, tempture, pressure);
+
     // 2. Material for the target: set to be Silicon
-    G4Material* targetMaterial
-           = G4NistManager::Instance()->FindOrBuildMaterial("G4_Si");
+    G4Material* targetMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_Si");
 
+    //------------------------------
     // II. CREATE GEOMETRY:
-
-    // a. Create the world (a box), defining first its size:
+    //------------------------------
+    // world
     G4double worldXSize   = 11*cm;
     G4double worldYZSize  = 1.25*worldXSize;
-    G4Box* worldSolid
-           = new G4Box("solid-World",    // name
-    	               0.5*worldXSize,   // half x-size
-    	               0.5*worldYZSize,  // half y-size 
-    	               0.5*worldYZSize); // half z-size
-    G4LogicalVolume* worldLogical
-           = new G4LogicalVolume(worldSolid,     // solid
-                                 materialWorld,  // material
-                                 "logic-World"); // name
-    G4VPhysicalVolume* worldPhysical
-           = new G4PVPlacement(nullptr,                 // (no) rotation
-                               G4ThreeVector(0.,0.,0.), // translation
-                               worldLogical,            // its logical volume
-                               "World",                 // its name
-                               nullptr,                 // its mother volume
-                               false,                   // not used
-                               0);                      // copy number
+    G4Box* worldSolid = new G4Box("solid-World", 0.5*worldXSize, 0.5*worldYZSize, 0.5*worldYZSize);
+    G4LogicalVolume* worldLogical = new G4LogicalVolume(worldSolid, materialWorld, "logic-World");
+    G4VPhysicalVolume* worldPhysical = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), worldLogical, "World", nullptr, false, 0);
 
-    // ++++++++++++++++++++++++++ YOUR CODE FROM HERE ++++++++++++++++++++++++
-    G4Box *mybox = new G4Box("mybox", 1.*mm, 2.*mm, 2.*mm);
+    // env
+    G4double envXSize = 0.48*worldXSize;
+    G4double envYZSize = 0.48*worldYZSize;
+    G4Box* envSolid = new G4Box("env-box", envXSize, envYZSize, envYZSize);
+    G4LogicalVolume* envLogical = new G4LogicalVolume(envSolid, materialWorld, "logic-env");
+    G4VPhysicalVolume *envPhysical = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), envLogical, "Env", worldLogical, false, 1);
+
+    // pixel
+    G4Box *pixel = new G4Box("pixel", pixel_thick/2, pixel_size/2, pixel_size/2);
+    G4LogicalVolume *pixel_logic = new G4LogicalVolume(pixel, targetMaterial, "logic-pixel");
+
+    // 1D array
+    G4double one_dim_array_size = 0.48*envYZSize;
+    G4double one_dim_array_thick = pixel_thick;
+    G4Box *one_dim_array = new G4Box("box_one_dim_array", one_dim_array_thick/2, one_dim_array_thick/2, one_dim_array_size/2);
+    G4LogicalVolume *one_dim_array_logic = new G4LogicalVolume(one_dim_array, materialWorld, "logic-one_dim_array");
+    new G4PVReplica("one_dim_array", pixel_logic, one_dim_array_logic, kZAxis, 100, space);
+
+    // 2D array
+    G4double two_dim_array_size = 0.48*envYZSize;
+    G4double two_dim_array_thick = pixel_thick;
+    G4Box *two_dim_array = new G4Box("box_two_dim_array", two_dim_array_thick/2, two_dim_array_size/2, two_dim_array_size/2);
+    G4LogicalVolume *two_dim_array_logic = new G4LogicalVolume(two_dim_array, materialWorld, "logic-two_dim_array");
+    new G4PVReplica("two_dim_array", one_dim_array_logic, two_dim_array_logic, kYAxis, 100, space);
+
+    // detector
+    G4double detXSize  = 0.48*envXSize;
+    G4double detYZSize = 0.48*envYZSize;
+    G4Box *mybox = new G4Box("mybox", detXSize/2, detYZSize/2, detYZSize/2);
     G4LogicalVolume *mylog = new G4LogicalVolume(mybox, materialWorld, "logic-Target");
-    //G4VPhysicalVolume *myphy = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.), mylog, "myphy", worldLogical, false, 1);
+    new G4PVReplica("layers", two_dim_array_logic, mylog, kXAxis, 10, 10*space);
 
-    G4VPhysicalVolume *myphy = new G4PVReplica("detector", mylog, worldLogical, kXAxis, 10, 3.*mm);
-
-    //for(int i=0; i<10; ++i)
-    //{
-    //    G4double pos = (double) (i+1) *5.*mm;
-    //    new G4PVPlacement(nullptr, G4ThreeVector(0., pos, 0.), mylog, "myphy", worldLogical, false, i+2);
-    //}
-
+    G4VPhysicalVolume* myphy = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), mylog, "detector", envLogical, false, 0);
     fTargetPhysical = myphy;
 
     // // translation

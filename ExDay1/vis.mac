@@ -21,10 +21,18 @@
 # Draw the geometry 
 /vis/drawVolume
 
+/vis/viewer/zoom 2.0 
+
 # ------------------------------------------------------------------------------
 # Set the World volume invisible 
 /vis/geometry/set/visibility logic-World 0  true
 /vis/geometry/set/colour logic-World 0 0 1 1 0.1
+
+/vis/geometry/set/visibility logic-env 0  true
+/vis/geometry/set/colour logic-env 0 1 1 1 0.2
+
+/vis/geometry/set/visibility logic-one_dim_array 0 0
+/vis/geometry/set/visibility logic-two_dim_array 0 0
 
 # ------------------------------------------------------------------------------
 /vis/geometry/set/colour logic-Target 0 0 0 1 0.3
