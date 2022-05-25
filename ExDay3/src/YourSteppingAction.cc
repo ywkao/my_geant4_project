@@ -3,10 +3,16 @@
 
 #include "G4Step.hh"
 
-YourSteppingAction::YourSteppingAction()                                     
+//YourSteppingAction::YourSteppingAction(const G4VPhysicalVolume* vol)                                     
+YourSteppingAction::YourSteppingAction(G4VPhysicalVolume* vol)                                     
 :   G4UserSteppingAction()
 {
 //  3. We need to obtain and remember the Target Volume - in this constructor?
+    fTargetVol = vol;
+    if(vol != nullptr)
+        std::cout << ">>>>> YourSteppingAction::YourSteppingAction fTargetVol = " << fTargetVol->GetName() << std::endl;
+    else
+        std::cout << ">>>>> YourSteppingAction::YourSteppingAction fTargetVol is a nullptr" << std::endl;
 }
 
 YourSteppingAction::~YourSteppingAction() {}
@@ -22,8 +28,7 @@ void YourSteppingAction::UserSteppingAction(const G4Step* theStep)
 
     // 1. Get the energy deposit
     //                                          Hint: look at the methods of G4Step
-    G4double edep = 0.01;       // -> CHANGE this
-    fSumEnergyDeposit += edep;
+    G4double edep = theStep->GetTotalEnergyDeposit();
 
     // 2. Report it as a check -- comment this out later!
     G4cout << " Energy deposity = " << edep << G4endl;
@@ -42,6 +47,15 @@ void YourSteppingAction::UserSteppingAction(const G4Step* theStep)
     //  assert( fTargetVol != nullptr );   // A check 
     //  c) Compare !
     //  d) Sum the energy only in 'target' volume (instead of all, as above)
+
+    G4VPhysicalVolume* current_volume = theTrack->GetVolume();
+    assert( fTargetVol != nullptr );   // A check 
+
+    if(current_volume == fTargetVol)
+    {
+        fSumEnergyDeposit += edep;
+    }
+
 
     // 5. Find the length of the current step 
     G4double step_length = 0.001;  // ->  CHANGE this

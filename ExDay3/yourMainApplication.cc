@@ -41,8 +41,14 @@ int main(int argc, char** argv)
     //
     // 1. DetectorConstruction  = YourDetectorConstruction <- G4VUserDetectorConstruction
     //
-    G4VUserDetectorConstruction* detector = new YourDetectorConstruction;
+    //G4VUserDetectorConstruction* detector = new YourDetectorConstruction;
+    YourDetectorConstruction* detector = new YourDetectorConstruction;
     runManager->SetUserInitialization( detector );
+
+    runManager->InitializeGeometry(); // important for constructing & passing fTargetVolume
+    G4VPhysicalVolume* fTargetPhysical = detector->GetTargetPhysicalVolume();
+    if(fTargetPhysical != nullptr) std::cout << ">>>>> YourMainApplication::main fTargetPhysical = " << fTargetPhysical->GetName() << std::endl;
+    else                           std::cout << ">>>>> YourMainApplication::main fTargetPhysical is a nullptr" << std::endl;
     
     //
     // 2. PhysicsList
@@ -53,8 +59,7 @@ int main(int argc, char** argv)
     
     // 
     // 3. ActionInitialization 
-    runManager->SetUserInitialization( new YourActionInitialization() );
-       // CHANGE above -- YourActionInitialisation needs the detector constuction
+    runManager->SetUserInitialization( new YourActionInitialization(detector) );
     
     // Visualization: 
     G4VisManager* visManager = new G4VisExecutive;

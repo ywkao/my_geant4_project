@@ -4,6 +4,7 @@
 #include "G4VUserActionInitialization.hh"
 
 // forward declarations
+#include "YourDetectorConstruction.hh"
 
 
 class YourActionInitialization : public G4VUserActionInitialization {
@@ -11,9 +12,7 @@ class YourActionInitialization : public G4VUserActionInitialization {
   // Method declaration:
   public:
     
-    YourActionInitialization();
-    //  HERE: Add arguments: anything needed to initialize data members
-    //  CHANGE - We need the pointer to YourDetectorConstruction
+    YourActionInitialization(YourDetectorConstruction* detector);
    
     virtual ~YourActionInitialization(); 
 
@@ -27,8 +26,7 @@ class YourActionInitialization : public G4VUserActionInitialization {
 
   // Data member declarations:
   private:
-      // New data members HERE
-      //   We will need the pointer to YourDetectorConstruction   
+      YourDetectorConstruction* fDetector = nullptr;
 };
 
 #endif

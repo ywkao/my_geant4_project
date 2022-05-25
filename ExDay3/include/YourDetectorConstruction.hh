@@ -27,9 +27,9 @@ class YourDetectorConstruction : public G4VUserDetectorConstruction
 
     // Public method to get the target logical volume pointer (used for scoring)
     // *****************************************************************************
-    // const G4VPhysicalVolume* GetTargetPhysicalVolume() const // -- CHANGE this
-    // { return fTargetPhysicalVolume;  } 
-    // UN-COMMENT the lines above ********
+    //const G4VPhysicalVolume* GetTargetPhysicalVolume() const
+    G4VPhysicalVolume* GetTargetPhysicalVolume()
+    { return fTargetPhysical; } 
     // *****************************************************************************
 
   private:  // Data members

@@ -3,15 +3,15 @@
 
 #include "YourPrimaryGeneratorAction.hh"
 
-// #include "YourDetectorConstruction.hh"
+#include "YourDetectorConstruction.hh"
 
 #include "YourEventAction.hh"
 #include "YourSteppingAction.hh"
 
-YourActionInitialization::YourActionInitialization()
-  : G4VUserActionInitialization()
+YourActionInitialization::YourActionInitialization(YourDetectorConstruction* detector)
+  : G4VUserActionInitialization(),
+    fDetector(detector)
 {
-   // CHANGE this 
    // We need to get/keep a pointer to 'YourDetectorConstruction'
 }
     
@@ -37,14 +37,21 @@ void YourActionInitialization::Build() const
   YourPrimaryGeneratorAction* primaryAction = new YourPrimaryGeneratorAction();
   SetUserAction(primaryAction);
 
+  G4VPhysicalVolume* fTargetPhysical = fDetector->GetTargetPhysicalVolume();
 
-  YourSteppingAction* stepAction = new YourSteppingAction();  // CHANGE this 
-  //   The SteppingAction needs the target volume from the DetectorConstruction !!
+  // the target volume is nullptr... // fixed by runManager->InitializeGeometry() in yourMainApplication.cc
+  if(fTargetPhysical != nullptr) std::cout << ">>>>> YourActionInitialization::Build fTargetPhysical = " << std::endl;
+  else                           std::cout << ">>>>> YourActionInitialization::Build fTargetPhysical is a nullptr" << std::endl;
+
+  if(fTargetPhysical == nullptr)
+    G4cerr << "WARNING: your fTargetPhysical is not (yet) defined!!" << G4endl;
+
+  YourSteppingAction* stepAction = new YourSteppingAction(fTargetPhysical);
 
   // Set UserSteppingAction
   SetUserAction( stepAction );
   
-    // Set UserEventAction
+  // Set UserEventAction
   YourEventAction* eventAction = new YourEventAction(stepAction);
   SetUserAction(eventAction);
 }  
