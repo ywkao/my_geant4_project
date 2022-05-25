@@ -31,7 +31,7 @@ void YourSteppingAction::UserSteppingAction(const G4Step* theStep)
     G4double edep = theStep->GetTotalEnergyDeposit();
 
     // 2. Report it as a check -- comment this out later!
-    G4cout << " Energy deposity = " << edep << G4endl;
+    //G4cout << " Energy deposity = " << edep << G4endl;
 
     // 3. Check whether step was done inside the Target
     // 
@@ -58,13 +58,15 @@ void YourSteppingAction::UserSteppingAction(const G4Step* theStep)
 
 
     // 5. Find the length of the current step 
-    G4double step_length = 0.001;  // ->  CHANGE this
+    G4double step_length = theStep->GetStepLength();
+    //G4cout << " Step length = " << step_length << G4endl;
 
     // 6. Check whether the particle is charged
-    G4double charge = 1.0 ;       // ->  CHANGE this
+    const G4ParticleDefinition* pDef = theTrack->GetParticleDefinition();
+    G4double charge = pDef->GetPDGCharge();
 
     // 7. Sum the length of charged steps - everywhere?
-    if( charge != 0.0)
+    if( charge != 0.0 && current_volume == fTargetVol)
     {
       fSumChargedSteps += step_length;
     }
