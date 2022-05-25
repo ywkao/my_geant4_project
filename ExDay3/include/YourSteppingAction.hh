@@ -35,12 +35,10 @@ class YourSteppingAction : public G4UserSteppingAction {
   // Data member declarations:
   private:
     G4VPhysicalVolume* fTargetVol = nullptr;
-    //const G4VPhysicalVolume* fTargetVol = nullptr;
-    //   Keep the target volume
 
+    //  Total energy deposit - in target volume   
     double  fSumEnergyDeposit = 0.0;
     double  fSumChargedSteps  = 0.0;
-    //  Total energy deposit - in target volume   
 };
 
 #endif
