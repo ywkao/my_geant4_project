@@ -18,6 +18,8 @@
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
 
+#include "G4ScoringManager.hh"
+
 int main(int argc, char** argv)
 {  
     // Interactive OR batch mode? Arguments will determine
@@ -77,7 +79,11 @@ int main(int argc, char** argv)
     else
     {
       // interactive mode: create ui-session       
-      // 
+      
+      // activate UI-command based scorer
+      G4ScoringManager* scManager = G4ScoringManager::GetScoringManager();
+      scManager->SetVerboseLevel(1);
+
       UImanager->ApplyCommand("/control/execute vis.mac");
       ui->SessionStart();
       // Here we are after the ui-session termination!

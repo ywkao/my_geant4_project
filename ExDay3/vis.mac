@@ -45,3 +45,34 @@
 # ------------------------------------------------------------------------------
 # Set the view point in terms angles 
 /vis/viewer/set/viewpointThetaPhi -40 -50
+
+# ------------------------------------------------------------------------------
+# practice
+# ------------------------------------------------------------------------------
+## define scoring mesh
+#/score/create/boxMesh boxMesh_1
+#/score/mesh/boxSize  5.  5.   5. mm
+#/score/mesh/nBin   100 100  100
+#
+## Select quantities to score.
+#/score/quantity/energyDeposit eDep
+#/score/quantity/nOfStep nOfStepGamma
+#/score/filter/particle gammaFilter gamma
+#/score/close
+#/score/list
+#
+## Disable visualisation and run
+#/vis/disable
+#/control/verbose 2
+#/run/verbose 1
+#
+#/gun/particle e-
+#/run/beamOn   500
+#
+#/vis/enable
+
+# ------------------------------------------------------------------------------
+/gun/particle e-
+/run/initialize
+/tracking/verbose 1
+/run/beamOn 2
