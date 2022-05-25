@@ -1,0 +1,65 @@
+# Batch input for Geant4 scoring
+########################################
+#
+# define scoring mesh
+#
+/score/create/boxMesh boxMesh_1
+#
+/score/mesh/boxSize  5.  5.   5. mm
+/score/mesh/nBin   100 100  100
+#
+/score/quantity/energyDeposit eDep
+/score/quantity/nOfStep nOfStepGamma
+/score/filter/particle gammaFilter gamma
+/score/quantity/nOfStep nOfStepEMinus
+/score/filter/particle eMinusFilter e-
+/score/quantity/nOfStep nOfStepEPlus
+/score/filter/particle ePlusFilter e+
+#
+/score/close
+#
+/score/list
+#
+########################################
+#
+/vis/disable
+/control/verbose 2
+/run/verbose 1
+#######/event/verbose 1
+#######/tracking/verbose 1
+#######/vis/verbose confirmations
+/gun/particle e-
+/run/beamOn 5000
+/vis/enable
+#
+########################################
+#
+# drawing projections
+#
+/score/drawProjection boxMesh_1 eDep
+/score/drawProjection boxMesh_1 nOfStepGamma
+/score/drawProjection boxMesh_1 nOfStepEMinus
+/score/drawProjection boxMesh_1 nOfStepEPlus
+#
+########################################
+#
+# drawing slices
+#
+# new scene and viewer
+/vis/open OGL
+/vis/drawVolume world
+/vis/viewer/copyViewFrom viewer-0
+/score/colorMap/setMinMax ! 0. 800.
+/control/loop draw-slice.mac iColumn 0 5 1
+#
+########################################
+#
+# Dump scorers to a file
+#
+/score/dumpQuantityToFile boxMesh_1 nOfStepGamma nOfStepGamma.txt
+#
+#
+
+
+# Adapted from examples/extended/runAndEvent/RE03/run1.mac
+
