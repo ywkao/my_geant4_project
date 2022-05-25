@@ -40,9 +40,10 @@ G4VPhysicalVolume* YourDetectorConstruction::Construct()
     // I. CREATE MATERIALS:
     //------------------------------
     // 1. Material for the world: low density hydrogen defined by "hand"
+    G4int n_pixels = 10; //100
     G4double pixel_size = 0.1*mm;
     G4double pixel_thick = 0.05*mm;
-    G4double space = 1.1*pixel_size;
+    G4double space = 1.01*pixel_size;
 
     G4double zet      = 1.0;
     G4double amass    = 1.01*g/mole;
@@ -80,14 +81,14 @@ G4VPhysicalVolume* YourDetectorConstruction::Construct()
     G4double one_dim_array_thick = pixel_thick;
     G4Box *one_dim_array = new G4Box("box_one_dim_array", one_dim_array_thick/2, one_dim_array_thick/2, one_dim_array_size/2);
     G4LogicalVolume *one_dim_array_logic = new G4LogicalVolume(one_dim_array, materialWorld, "logic-one_dim_array");
-    new G4PVReplica("one_dim_array", pixel_logic, one_dim_array_logic, kZAxis, 100, space);
+    new G4PVReplica("one_dim_array", pixel_logic, one_dim_array_logic, kZAxis, n_pixels, space);
 
     // 2D array
     G4double two_dim_array_size = 0.48*envYZSize;
     G4double two_dim_array_thick = pixel_thick;
     G4Box *two_dim_array = new G4Box("box_two_dim_array", two_dim_array_thick/2, two_dim_array_size/2, two_dim_array_size/2);
     G4LogicalVolume *two_dim_array_logic = new G4LogicalVolume(two_dim_array, materialWorld, "logic-two_dim_array");
-    new G4PVReplica("two_dim_array", one_dim_array_logic, two_dim_array_logic, kYAxis, 100, space);
+    new G4PVReplica("two_dim_array", one_dim_array_logic, two_dim_array_logic, kYAxis, n_pixels, space);
 
     // detector
     G4double detXSize  = 0.48*envXSize;
