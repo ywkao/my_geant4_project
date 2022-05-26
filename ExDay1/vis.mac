@@ -21,18 +21,48 @@
 # Draw the geometry 
 /vis/drawVolume
 
-/vis/viewer/zoom 2.0 
+/vis/viewer/zoom 1.0 
 
 # ------------------------------------------------------------------------------
-# Set the World volume invisible 
-/vis/geometry/set/visibility logic-World 0  true
+# Set volume color (black red green blue tranparancy)
+/vis/geometry/set/visibility logic-World 0 true
 /vis/geometry/set/colour logic-World 0 0 1 1 0.1
 
-/vis/geometry/set/visibility logic-env 0  true
-/vis/geometry/set/colour logic-env 0 1 1 1 0.2
+/vis/geometry/set/visibility logic-env 0 true
+/vis/geometry/set/colour logic-env 0 1 1 1 0.1
 
-/vis/geometry/set/visibility logic-one_dim_array 0 0
-/vis/geometry/set/visibility logic-two_dim_array 0 0
+#/vis/geometry/set/visibility logic-one_dim_array 0 true
+#/vis/geometry/set/colour logic-one_dim_array 0 1 0 0 0.1
+#/vis/geometry/set/visibility logic-two_dim_array 0 true
+#/vis/geometry/set/colour logic-two_dim_array 0 0 1 0 0.1
+
+# Set volume invisible 
+#/vis/geometry/set/visibility logic-World 0 false 
+#/vis/geometry/set/visibility logic-env 0 false
+#/vis/geometry/set/visibility logic-one_dim_array 0 false
+#/vis/geometry/set/visibility logic-two_dim_array 0 false
+
+/vis/geometry/set/visibility logic-one_dim_array-layer1  0 false
+/vis/geometry/set/visibility logic-one_dim_array-layer2  0 false
+/vis/geometry/set/visibility logic-one_dim_array-layer3  0 false
+/vis/geometry/set/visibility logic-one_dim_array-layer4  0 false
+/vis/geometry/set/visibility logic-one_dim_array-layer5  0 false
+/vis/geometry/set/visibility logic-one_dim_array-layer6  0 false
+/vis/geometry/set/visibility logic-one_dim_array-layer7  0 false
+/vis/geometry/set/visibility logic-one_dim_array-layer8  0 false
+/vis/geometry/set/visibility logic-one_dim_array-layer9  0 false
+/vis/geometry/set/visibility logic-one_dim_array-layer10 0 false
+
+/vis/geometry/set/visibility logic-two_dim_array-layer1  0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer2  0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer3  0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer4  0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer5  0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer6  0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer7  0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer8  0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer9  0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer10 0 false
 
 # ------------------------------------------------------------------------------
 /vis/geometry/set/colour logic-Target 0 0 0 1 0.3

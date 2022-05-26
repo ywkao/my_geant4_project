@@ -36,20 +36,20 @@ YourDetectorConstruction::~YourDetectorConstruction()
 //
 G4VPhysicalVolume* YourDetectorConstruction::Construct()
 {
-    G4double yt = cm; // unit in y coordinate
+    G4double yt = 0.5*mm; // unit in y coordinate, cm
     std::vector<G4double> locations = { 5*yt, 15*yt, 25*yt, 35*yt, 45*yt, 55*yt, 65*yt, 75*yt, 85*yt, 100*yt };
 
     //------------------------------
     // I. CREATE MATERIALS:
     //------------------------------
     // 0. pixel info & world dimension
-    G4int n_pixels = 10;
+    G4int n_pixels = 10; // 100
     G4double pixel_unit   = micrometer;
     G4double default_pixel_length = 200*pixel_unit; // z direction
     G4double default_pixel_width  = 100*pixel_unit; // x direction
     G4double default_pixel_thick  = 300*pixel_unit; // y direction
 
-    G4double worldXSize  = 1*cm;
+    G4double worldXSize  = 10*cm; // 200*cm
     G4double worldYZSize = 1.25*worldXSize;
     G4double occupied_fraction = 0.96;
 
@@ -88,10 +88,10 @@ G4VPhysicalVolume* YourDetectorConstruction::Construct()
 
     //----------------------------------------------------------------------------------------------------
 
-    //for(unsigned int i=0; i<locations.size(); ++i)
-    for(unsigned int i=0; i<1; ++i)
+    for(unsigned int i=0; i<locations.size(); ++i)
     {
         G4String idx = std::to_string(i+1);
+        G4String tag = "-layer" + idx;
         G4String name_obj;
         G4String name_log;
         G4String name_vol;
@@ -101,37 +101,41 @@ G4VPhysicalVolume* YourDetectorConstruction::Construct()
         G4double pixel_length = scale*default_pixel_length; // z direction
         G4double pixel_width  = scale*default_pixel_width ; // x direction
         G4double pixel_thick  = default_pixel_thick ; // y direction
-        G4double space_z      = 1.2*pixel_length;
-        G4double space_x      = 1.2*pixel_width;
-        G4double space_y      = 3.0*pixel_thick;
+        G4double space_z = 1.2*pixel_length;
+        G4double space_x = 1.2*pixel_width;
+        G4double space_y = 3.0*pixel_thick;
 
         // pixel
-        name_obj = "pixel-layer" + idx;
-        name_log = "logic-pixel-layer" + idx;
+        name_obj = "pixel" + tag;
+        name_log = "logic-pixel" + tag;
         G4Box *pixel = new G4Box(name_obj, 0.5*pixel_width, 0.5*pixel_thick, 0.5*pixel_length);
         G4LogicalVolume *pixel_logic = new G4LogicalVolume(pixel, targetMaterial, name_log);
 
         // 1D array
+        name_obj = "box_one_dim_array" + tag;
+        name_log = "logic-one_dim_array" + tag;
+        name_vol = "one_dim_array" + tag;
         G4double one_dim_array_size = occupied_fraction*envYZSize;
         G4double one_dim_array_thick = pixel_thick;
-        G4Box *one_dim_array = new G4Box("box_one_dim_array", 0.5*one_dim_array_thick, 0.5*one_dim_array_thick, 0.5*one_dim_array_size);
-        G4LogicalVolume *one_dim_array_logic = new G4LogicalVolume(one_dim_array, materialWorld, "logic-one_dim_array");
-        new G4PVReplica("one_dim_array", pixel_logic, one_dim_array_logic, kZAxis, n_pixels, space_z);
+        G4Box *one_dim_array = new G4Box(name_obj, 0.5*one_dim_array_thick, 0.5*one_dim_array_thick, 0.5*one_dim_array_size);
+        G4LogicalVolume *one_dim_array_logic = new G4LogicalVolume(one_dim_array, materialWorld, name_log);
+        new G4PVReplica(name_vol, pixel_logic, one_dim_array_logic, kZAxis, n_pixels, space_z);
 
         // 2D array
+        name_obj = "box_two_dim_array" + tag;
+        name_log = "logic-two_dim_array" + tag;
+        name_vol = "two_dim_array" + tag;
         G4double two_dim_array_size = occupied_fraction*envYZSize;
         G4double two_dim_array_thick = pixel_thick;
-        G4Box *two_dim_array = new G4Box("box_two_dim_array", 0.5*two_dim_array_size, 0.5*two_dim_array_thick, 0.5*two_dim_array_size);
-        G4LogicalVolume *two_dim_array_logic = new G4LogicalVolume(two_dim_array, materialWorld, "logic-two_dim_array");
-        new G4PVReplica("two_dim_array", one_dim_array_logic, two_dim_array_logic, kXAxis, n_pixels, space_x);
+        G4Box *two_dim_array = new G4Box(name_obj, 0.5*two_dim_array_size, 0.5*two_dim_array_thick, 0.5*two_dim_array_size);
+        G4LogicalVolume *two_dim_array_logic = new G4LogicalVolume(two_dim_array, materialWorld, name_log);
+        new G4PVReplica(name_vol, one_dim_array_logic, two_dim_array_logic, kXAxis, n_pixels, space_x);
 
         // place element in detector
         G4String layer_name = "layer" + idx;
         G4cout << ">>> layer_name = " << layer_name << G4endl;
-        new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), two_dim_array_logic, layer_name, mylog, false, i+2);
+        new G4PVPlacement(nullptr, G4ThreeVector(0.,locations[i],0.), two_dim_array_logic, layer_name, mylog, false, i+2);
     }
-
-    //new G4PVReplica("layers", two_dim_array_logic, mylog, kYAxis, 10, 3.0*default_pixel_thick);
 
     //----------------------------------------------------------------------------------------------------
 
