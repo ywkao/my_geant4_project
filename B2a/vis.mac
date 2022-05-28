@@ -35,6 +35,14 @@
 #
 # Specify zoom value:
 /vis/viewer/zoom 1.4
+
+# Set volume color (black red green blue tranparancy)
+/vis/geometry/set/visibility logic-World 0 true
+/vis/geometry/set/colour logic-World 0 0 1 1 0.5
+
+/vis/geometry/set/visibility logic-env 0 true
+/vis/geometry/set/colour logic-env 0 1 1 1 0.1
+
 #
 # Specify style (surface, wireframe, auxiliary edges,...)
 #/vis/viewer/set/style wireframe
@@ -80,3 +88,6 @@
 #
 # For file-based drivers, use this to create an empty detector view:
 #/vis/viewer/flush
+# ------------------------------------------------------------------------------
+# Set the view point in terms angles 
+/vis/viewer/set/viewpointThetaPhi -40 -50
