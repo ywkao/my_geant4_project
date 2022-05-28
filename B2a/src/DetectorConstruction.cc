@@ -102,10 +102,10 @@ void DetectorConstruction::DefineMaterials()
   nistManager->FindOrBuildMaterial("G4_AIR");
 
   // Lead defined using NIST Manager
-  fTargetMaterial  = nistManager->FindOrBuildMaterial("G4_Pb");
+  fTargetMaterial  = nistManager->FindOrBuildMaterial("G4_Si");
 
   // Xenon gas defined using NIST Manager
-  fChamberMaterial = nistManager->FindOrBuildMaterial("G4_Xe");
+  fChamberMaterial = nistManager->FindOrBuildMaterial("G4_AIR");
 
   // Print materials
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
@@ -133,6 +133,13 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
   G4double trackerSize   = 0.5*trackerLength;  // Half length of the Tracker
 
   // Definitions of Solids, Logical Volumes, Physical Volumes
+
+  // u, v, w are the daughter axes, projected on the mother frame
+  G4double phi = 90*deg;
+  G4ThreeVector u = G4ThreeVector( std::cos(phi), std::sin(phi),0.);
+  G4ThreeVector v = G4ThreeVector(0, 0, -1);
+  G4ThreeVector w = G4ThreeVector(-std::sin(phi), std::cos(phi),0.);
+  G4RotationMatrix *myRotation  = new G4RotationMatrix(u, v, w);
 
   // World
 
@@ -301,7 +308,7 @@ void DetectorConstruction::ConstructSDandField()
   // Create global magnetic field messenger.
   // Uniform magnetic field is then created automatically if
   // the field value is not zero.
-  G4ThreeVector fieldValue = G4ThreeVector();
+  G4ThreeVector fieldValue = G4ThreeVector(0., 0., 2.*tesla);
   fMagFieldMessenger = new G4GlobalMagFieldMessenger(fieldValue);
   fMagFieldMessenger->SetVerboseLevel(1);
 

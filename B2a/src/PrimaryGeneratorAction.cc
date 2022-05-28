@@ -52,7 +52,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   // default particle kinematic
 
   G4ParticleDefinition* particleDefinition
-    = G4ParticleTable::GetParticleTable()->FindParticle("proton");
+    = G4ParticleTable::GetParticleTable()->FindParticle("mu-");
 
   fParticleGun->SetParticleDefinition(particleDefinition);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
