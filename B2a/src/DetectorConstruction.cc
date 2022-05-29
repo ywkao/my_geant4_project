@@ -196,17 +196,22 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
       //+++++++++++++++++++++++++
       // pixel
       //+++++++++++++++++++++++++
-      name_obj = "pixel" + tag;
-      name_log = "logic-pixel" + tag;
+      //name_obj = "pixel" + tag;
+      //name_log = "logic-pixel" + tag;
+      name_obj = "pixel_box";
+      name_log = "pixel_LV";
       G4Box *pixel = new G4Box(name_obj, 0.5*pixel_width, 0.5*pixel_thick, 0.5*pixel_length);
       G4LogicalVolume *pixel_logic = new G4LogicalVolume(pixel, targetMaterial, name_log);
 
       //+++++++++++++++++++++++++
       // 2D array
       //+++++++++++++++++++++++++
-      name_obj = "box_two_dim_array" + tag;
-      name_log = "logic-two_dim_array" + tag;
-      name_vol = "two_dim_array" + tag;
+      //name_obj = "box_two_dim_array" + tag;
+      //name_log = "logic-two_dim_array" + tag;
+      //name_vol = "two_dim_array" + tag;
+      name_obj = "two_dim_array_box";
+      name_log = "two_dim_array_LV";
+      name_vol = "two_dim_array_PV";
       G4double two_dim_array_size = occupied_fraction*worldYZSize;
       G4double two_dim_array_thick = pixel_thick;
       G4Box *two_dim_array = new G4Box(name_obj, 0.5*two_dim_array_size, 0.5*two_dim_array_thick, 0.5*two_dim_array_size);
@@ -220,7 +225,8 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
           G4double ZPosition = firstZPosition + z*space_z;
           for(G4int x=0; x<n_pixels; ++x)
           {
-              name_vol = "pixel" + tag + "-z" + std::to_string(z) + "-x" + std::to_string(x);
+              //name_vol = "pixel" + tag + "-z" + std::to_string(z) + "-x" + std::to_string(x);
+              name_vol = "pixel";
               G4double XPosition = firstXPosition + x*space_x;
               G4ThreeVector position = G4ThreeVector(XPosition, 0., ZPosition);
               new G4PVPlacement(nullptr, position, pixel_logic, name_vol, two_dim_array_logic, copyNo, fCheckOverlaps);
@@ -231,7 +237,8 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
       //++++++++++++++++++++++++++++++
       // place element in detector
       //++++++++++++++++++++++++++++++
-      G4String layer_name = "layer" + idx;
+      //G4String layer_name = "layer" + idx;
+      G4String layer_name = "layer";
       G4cout << ">>> layer_name = " << layer_name << G4endl;
       new G4PVPlacement(nullptr, G4ThreeVector(0.,locations[i],0.), two_dim_array_logic, layer_name, mylog, i, fCheckOverlaps);
   }
@@ -404,6 +411,7 @@ void DetectorConstruction::ConstructSDandField()
   // Setting aTrackerSD to all logical volumes with the same name
   // of "Chamber_LV".
   //SetSensitiveDetector("Chamber_LV", aTrackerSD, true);
+  SetSensitiveDetector("two_dim_array_LV", aTrackerSD, true);
 
   // Create global magnetic field messenger.
   // Uniform magnetic field is then created automatically if
