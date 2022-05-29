@@ -145,15 +145,15 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
   //==================================================
   // start of my detector
   //==================================================
-  G4double worldXSize  = 10*cm; // 200*cm
+  G4double worldXSize  = 200*cm;
   G4double worldYZSize = 1.25*worldXSize;
   G4double occupied_fraction = 0.96;
 
-  G4double yt = 0.5*mm; // unit in y coordinate, cm
+  G4double yt = cm; // unit in y coordinate, cm
   std::vector<G4double> locations = { 5*yt, 15*yt, 25*yt, 35*yt, 45*yt, 55*yt, 65*yt, 75*yt, 85*yt, 100*yt };
 
   G4int n_pixels = 10; // 100
-  G4double pixel_unit   = micrometer;
+  G4double pixel_unit   = 50*micrometer; // for quick test
   G4double default_pixel_length = 200*pixel_unit; // z direction
   G4double default_pixel_width  = 100*pixel_unit; // x direction
   G4double default_pixel_thick  = 300*pixel_unit; // y direction
@@ -161,15 +161,16 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
   G4Material* targetMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_Si");
 
   // world
-  G4Box* worldSolid = new G4Box("solid-World", 0.5*worldXSize, 0.5*worldYZSize, 0.5*worldYZSize);
-  G4LogicalVolume* worldLV = new G4LogicalVolume(worldSolid, air, "logic-World");
-  G4VPhysicalVolume* worldPV = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), worldLV, "World", nullptr, false, 0);
+  G4Box* worldSolid = new G4Box("World", 0.5*worldXSize, 0.5*worldYZSize, 0.5*worldYZSize);
+  G4LogicalVolume* worldLV = new G4LogicalVolume(worldSolid, air, "World");
+  G4VPhysicalVolume* worldPV = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), worldLV, "World", nullptr, 0, fCheckOverlaps);
 
   // detector
   G4double detXSize  = occupied_fraction*worldXSize;
   G4double detYZSize = occupied_fraction*worldYZSize;
   G4Box *mybox = new G4Box("mybox", 0.5*detXSize, 0.5*detYZSize, 0.5*detYZSize);
   G4LogicalVolume *mylog = new G4LogicalVolume(mybox, air, "logic-Target");
+  G4VPhysicalVolume* myphy = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), mylog, "detector", worldLV, 1, fCheckOverlaps);
 
   //----------------------------------------------------------------------------------------------------
 
@@ -191,7 +192,6 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
       G4double space_z = 1.2*pixel_length;
       G4double space_x = 1.2*pixel_width;
       G4double space_y = 3.0*pixel_thick;
-      G4double firstPosition;
 
       //+++++++++++++++++++++++++
       // pixel
@@ -200,26 +200,6 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
       name_log = "logic-pixel" + tag;
       G4Box *pixel = new G4Box(name_obj, 0.5*pixel_width, 0.5*pixel_thick, 0.5*pixel_length);
       G4LogicalVolume *pixel_logic = new G4LogicalVolume(pixel, targetMaterial, name_log);
-
-      //+++++++++++++++++++++++++
-      // 1D array
-      //+++++++++++++++++++++++++
-      name_obj = "box_one_dim_array" + tag;
-      name_log = "logic-one_dim_array" + tag;
-      name_vol = "one_dim_array" + tag;
-      G4double one_dim_array_size = occupied_fraction*worldYZSize;
-      G4double one_dim_array_thick = pixel_thick;
-      G4Box *one_dim_array = new G4Box(name_obj, 0.5*one_dim_array_thick, 0.5*one_dim_array_thick, 0.5*one_dim_array_size);
-      G4LogicalVolume *one_dim_array_logic = new G4LogicalVolume(one_dim_array, air, name_log);
-      //new G4PVReplica(name_vol, pixel_logic, one_dim_array_logic, kZAxis, n_pixels, space_z);
-      firstPosition = -0.5*n_pixels*space_z + 0.5*space_z; // center of left-most pixel
-      for(G4int j=0; j<n_pixels; ++j)
-      {
-        name_vol = "pixel" + tag + "-" + std::to_string(j);
-        G4double ZPosition = firstPosition + j*space_z;
-        G4ThreeVector position = G4ThreeVector(0., 0., ZPosition);
-        new G4PVPlacement(nullptr, position, pixel_logic, name_log, one_dim_array_logic, false, j);
-      }
 
       //+++++++++++++++++++++++++
       // 2D array
@@ -232,13 +212,20 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
       G4Box *two_dim_array = new G4Box(name_obj, 0.5*two_dim_array_size, 0.5*two_dim_array_thick, 0.5*two_dim_array_size);
       G4LogicalVolume *two_dim_array_logic = new G4LogicalVolume(two_dim_array, air, name_log);
       //new G4PVReplica(name_vol, one_dim_array_logic, two_dim_array_logic, kXAxis, n_pixels, space_x);
-      firstPosition = -0.5*n_pixels*space_x + 0.5*space_x; // center of bottom 1d array
-      for(G4int j=0; j<n_pixels; ++j)
+      G4int copyNo = 0;
+      G4double firstZPosition = -0.5*n_pixels*space_z + 0.5*space_z; // center of left-most pixel
+      G4double firstXPosition = -0.5*n_pixels*space_x + 0.5*space_x; // center of bottom 1d array
+      for(G4int z=0; z<n_pixels; ++z)
       {
-        name_vol = "one_dim_array" + tag + "-" + std::to_string(j);
-        G4double XPosition = firstPosition + j*space_x;
-        G4ThreeVector position = G4ThreeVector(XPosition, 0., 0.);
-        new G4PVPlacement(nullptr, position, one_dim_array_logic, name_log, two_dim_array_logic, false, j);
+          G4double ZPosition = firstZPosition + z*space_z;
+          for(G4int x=0; x<n_pixels; ++x)
+          {
+              name_vol = "pixel" + tag + "-z" + std::to_string(z) + "-x" + std::to_string(x);
+              G4double XPosition = firstXPosition + x*space_x;
+              G4ThreeVector position = G4ThreeVector(XPosition, 0., ZPosition);
+              new G4PVPlacement(nullptr, position, pixel_logic, name_vol, two_dim_array_logic, copyNo, fCheckOverlaps);
+              copyNo++;
+          }
       }
 
       //++++++++++++++++++++++++++++++
@@ -246,12 +233,11 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
       //++++++++++++++++++++++++++++++
       G4String layer_name = "layer" + idx;
       G4cout << ">>> layer_name = " << layer_name << G4endl;
-      new G4PVPlacement(nullptr, G4ThreeVector(0.,locations[i],0.), two_dim_array_logic, layer_name, mylog, false, i+2);
+      new G4PVPlacement(nullptr, G4ThreeVector(0.,locations[i],0.), two_dim_array_logic, layer_name, mylog, i, fCheckOverlaps);
   }
 
   //----------------------------------------------------------------------------------------------------
 
-  G4VPhysicalVolume* myphy = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), mylog, "detector", worldLV, false, 0);
 
   /*
   // World

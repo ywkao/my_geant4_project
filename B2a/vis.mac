@@ -40,8 +40,16 @@
 /vis/geometry/set/visibility logic-World 0 true
 /vis/geometry/set/colour logic-World 0 0 1 1 0.5
 
-/vis/geometry/set/visibility logic-one_dim_array-layer0 0 false
 /vis/geometry/set/visibility logic-two_dim_array-layer0 0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer1 0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer2 0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer3 0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer4 0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer5 0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer6 0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer7 0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer8 0 false
+/vis/geometry/set/visibility logic-two_dim_array-layer9 0 false
 
 #
 # Specify style (surface, wireframe, auxiliary edges,...)

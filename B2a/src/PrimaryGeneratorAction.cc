@@ -55,8 +55,10 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     = G4ParticleTable::GetParticleTable()->FindParticle("mu-");
 
   fParticleGun->SetParticleDefinition(particleDefinition);
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
-  fParticleGun->SetParticleEnergy(3.0*GeV);
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,1.,0.));
+  fParticleGun->SetParticleEnergy(500.0*MeV);
+  fParticleGun->SetParticleEnergy(2.0*GeV);
+  fParticleGun->SetParticleEnergy(1.0*GeV);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -90,7 +92,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   // Note that this particular case of starting a primary particle on the world boundary
   // requires shooting in a direction towards inside the world.
-  fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., -worldZHalfLength));
+  //fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., -worldZHalfLength));
+  fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0.));
 
   fParticleGun->GeneratePrimaryVertex(anEvent);
 }
