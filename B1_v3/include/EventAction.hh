@@ -55,11 +55,11 @@ class EventAction : public G4UserEventAction
 
     void AddEdep(G4double edep) { fEdep += edep; }
   
-  /// Vector of hits in silicon sensors: hit position x (in cm)
+  /// Vector of hits in silicon sensors: hit position x (in mm)
   std::vector<G4double> fSiHitsX;
-  /// Vector of hits in silicon sensors: hit position y (in cm)
+  /// Vector of hits in silicon sensors: hit position y (in mm)
   std::vector<G4double> fSiHitsY;
-  /// Vector of hits in silicon sensors: hit position z (in cm)
+  /// Vector of hits in silicon sensors: hit position z (in mm)
   std::vector<G4double> fSiHitsZ;
   /// Vector of hits in silicon sensors: hit energy (in keV)
   std::vector<G4double> fSiHitsEdep;
@@ -69,7 +69,7 @@ class EventAction : public G4UserEventAction
   
 private:
   RunAction* fRunAction = nullptr;
-    G4double   fEdep = 0.;
+  G4double   fEdep = 0.;
 };
 
 }

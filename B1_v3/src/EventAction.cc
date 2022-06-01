@@ -71,7 +71,7 @@ namespace B1
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-  EventAction::EventAction()
+EventAction::EventAction()
 {
   // set printing per each event
   G4RunManager::GetRunManager()->SetPrintProgress(1);
@@ -103,50 +103,34 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
   auto printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
   auto primary = event->GetPrimaryVertex(0)->GetPrimary(0);
+  G4int eventID = event->GetEventID();
 
   G4cout
     << G4endl
-    << ">>> EndOfEventAction :  Event " << event->GetEventID() << " >>> Simulation truth : "
+    << "EventAction::EndOfEventAction :  Event " << event->GetEventID() << " >>> Simulation truth : "
     << primary->GetG4code()->GetParticleName()
     << " " << primary->GetMomentum() << G4endl;
-
-  // accumulate statistics in run action
-  //fRunAction->AddEdep(fEdep);
-
-  G4cout << " fEdep " << fEdep/CLHEP::keV << G4endl;
-  G4int eventID = event->GetEventID();
-  
-  // Get analysis manager
-  auto analysisManager = G4AnalysisManager::Instance();
-
 
   G4VHitsCollection* hc = event->GetHCofThisEvent()->GetHC(0);
   auto nhit = hc->GetSize();
 
-
-  analysisManager->FillH1(0, fEdep/CLHEP::keV);
-
-  analysisManager->FillNtupleIColumn(0, eventID);
-  analysisManager->FillNtupleIColumn(1, fEdep/CLHEP::keV);
-
-
-  analysisManager->FillNtupleIColumn(2,nhit);
-  analysisManager->FillNtupleDColumn(3,primary->GetMomentum().x());
-  analysisManager->FillNtupleDColumn(4,primary->GetMomentum().y());
-  analysisManager->FillNtupleDColumn(5,primary->GetMomentum().z());
-
-  G4cout << " fill the hit vector " << G4endl;
-
+  // accumulate statistics in run action // Well, I'm not sure how to do
+  //fRunAction->AddEdep(fEdep);
+  
+  G4cout << ">>> start to fill the hit vector " << G4endl;
   for (unsigned long i = 0; i < hc->GetSize(); ++i) {
     auto hit = static_cast<TrackerHit*>(hc->GetHit(i));
     //if (hit->isValidHit()) {
-      //G4cout << "  hit " << std::setw(3) << i << "  detector position " << hit->GetDetPos() << G4endl;
       G4cout << "  hit " << std::setw(3) << i
+      << "  DetId: " << std::setw(3) << hit->GetDetectorNb()
       << "  detector position ("
       << std::setw(8) << hit->GetDetPos().getX()/CLHEP::mm << ", " 
       << std::setw(8) << hit->GetDetPos().getY()/CLHEP::mm << ", "
       << std::setw(8) << hit->GetDetPos().getZ()/CLHEP::mm << ")   "
+      << "  Edep: " << hit->GetEdep()/CLHEP::keV
       << G4endl;
+
+      fEdep += hit->GetEdep();
 
       fSiHitsX.push_back(hit->GetDetPos().x()/CLHEP::mm);    
       fSiHitsY.push_back(hit->GetDetPos().y()/CLHEP::mm);
@@ -155,6 +139,21 @@ void EventAction::EndOfEventAction(const G4Event* event)
       fDetID.push_back(hit->GetDetectorNb());
       //}
   }
+
+  G4cout << " fEdep " << fEdep/CLHEP::keV << G4endl;
+
+  // Get analysis manager
+  auto analysisManager = G4AnalysisManager::Instance();
+
+  analysisManager->FillH1(0, fEdep/CLHEP::MeV);
+
+  analysisManager->FillNtupleIColumn(0, eventID);
+  analysisManager->FillNtupleIColumn(1, fEdep/CLHEP::keV);
+
+  analysisManager->FillNtupleIColumn(2,nhit);
+  analysisManager->FillNtupleDColumn(3,primary->GetMomentum().x());
+  analysisManager->FillNtupleDColumn(4,primary->GetMomentum().y());
+  analysisManager->FillNtupleDColumn(5,primary->GetMomentum().z());
 
   analysisManager->AddNtupleRow();
 

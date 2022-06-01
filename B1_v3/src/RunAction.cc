@@ -68,8 +68,6 @@ RunAction::RunAction(EventAction* eventAction)
   accumulableManager->RegisterAccumulable(fEdep);
   accumulableManager->RegisterAccumulable(fEdep2);
 
-
-
   // Create the generic analysis manager
   auto analysisManager = G4AnalysisManager::Instance();
   analysisManager->SetDefaultFileType("root");
@@ -84,7 +82,8 @@ RunAction::RunAction(EventAction* eventAction)
 
   // Book histograms, ntuple
   // Creating 1D histograms
-  analysisManager->CreateH1("Edep","Energy Deposit (keV)", 10000, 0., 10000); // h1 Id = 0
+  //analysisManager->CreateH1("Edep","Energy Deposit (keV)", 10000, 0., 10000); // h1 Id = 0
+  analysisManager->CreateH1("Edep","Energy Deposit (MeV)", 500, 0., 100); // h1 Id = 0
 
   // Creating ntuple
   if ( fEventAction ) {
