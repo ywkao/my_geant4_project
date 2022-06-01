@@ -79,13 +79,12 @@ RunAction::RunAction(EventAction* eventAction)
 
   // Default settings
   analysisManager->SetNtupleMerging(true);
-     // Note: merging ntuples is available only with Root output
+  // Note: merging ntuples is available only with Root output
   analysisManager->SetFileName("Output");
 
   // Book histograms, ntuple
   // Creating 1D histograms
-  analysisManager
-    ->CreateH1("Edep","Energy Deposit (keV)", 10000, 0., 10000); // h1 Id = 0
+  analysisManager->CreateH1("Edep","Energy Deposit (keV)", 10000, 0., 10000); // h1 Id = 0
 
   // Creating ntuple
   if ( fEventAction ) {
@@ -99,13 +98,11 @@ RunAction::RunAction(EventAction* eventAction)
     analysisManager->CreateNtupleDColumn("GenPY_MeV");  // column Id = 4
     analysisManager->CreateNtupleDColumn("GenPZ_MeV");  // column Id = 5
 
-    
     analysisManager->CreateNtupleDColumn("Hits_DetX_mm", fEventAction->fSiHitsX);  // column Id = 6
     analysisManager->CreateNtupleDColumn("Hits_DetY_mm", fEventAction->fSiHitsY);  // column Id = 7
     analysisManager->CreateNtupleDColumn("Hits_DetZ_mm", fEventAction->fSiHitsZ);  // column Id = 8
     analysisManager->CreateNtupleDColumn("Hits_DetE_keV", fEventAction->fSiHitsEdep);  // column Id = 9
     analysisManager->CreateNtupleIColumn("Hits_DetID", fEventAction->fDetID);  // column Id = 10
-
     
     analysisManager->FinishNtuple(ntupleID);
   }
@@ -113,14 +110,13 @@ RunAction::RunAction(EventAction* eventAction)
   // Set ntuple output file
   analysisManager->SetNtupleFileName(0, "Output");
   
-  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 RunAction::~RunAction()
 {
- }
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

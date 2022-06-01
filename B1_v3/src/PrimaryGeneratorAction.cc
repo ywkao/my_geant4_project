@@ -53,10 +53,10 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4String particleName;
   G4ParticleDefinition* particle
-    = particleTable->FindParticle(particleName="gamma");
+    = particleTable->FindParticle(particleName="mu-");
   fParticleGun->SetParticleDefinition(particle);
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
-  fParticleGun->SetParticleEnergy(6.*MeV);
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,1.,0.));
+  fParticleGun->SetParticleEnergy(500.*MeV);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -77,6 +77,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // on DetectorConstruction class we get Envelope volume
   // from G4LogicalVolumeStore.
 
+  /*
   G4double envSizeXY = 0;
   G4double envSizeZ = 0;
 
@@ -109,6 +110,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4double z0 = -0.5 * envSizeZ;
 
   fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+  */
+  fParticleGun->SetParticlePosition(G4ThreeVector(0,0,0));
 
   fParticleGun->GeneratePrimaryVertex(anEvent);
 }
