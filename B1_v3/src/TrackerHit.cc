@@ -79,13 +79,20 @@ void TrackerHit::Draw()
 void TrackerHit::Print()
 {
   G4cout
-     << "  trackID: " << fTrackID << " detetorNb: " << fDetectorNb
-     << "  Edep: "
-     << std::setw(3) << fEdep/CLHEP::keV //G4BestUnit(fEdep,"Energy")
-     << " Position: "
-     << std::setw(3) << fPos/CLHEP::mm //G4BestUnit( fPos,"Length")
-     << " DetPosition: "
-     << std::setw(3) << fDetPos/CLHEP::mm //G4BestUnit( fDetPos,"Length")
+     << std::fixed << std::setprecision(3)
+     << " trackID: "     << std::setw(3) << fTrackID
+     << " detetorNb: "   << fDetectorNb
+     << " Edep: "        << std::setw(8) << fEdep/CLHEP::keV << "   " //G4BestUnit(fEdep,"Energy")
+     << " Position: ("
+     << std::setw(8) << fPos.getX()/CLHEP::mm << ", "
+     << std::setw(8) << fPos.getY()/CLHEP::mm << ", "
+     << std::setw(8) << fPos.getZ()/CLHEP::mm << ")   "
+     << " DetPosition: ("
+     << std::setw(8) << fDetPos.getX()/CLHEP::mm << ", " 
+     << std::setw(8) << fDetPos.getY()/CLHEP::mm << ", "
+     << std::setw(8) << fDetPos.getZ()/CLHEP::mm << ")   "
+     //<< " Position: "    << fPos/CLHEP::mm << "   " //G4BestUnit( fPos,"Length")
+     //<< " DetPosition: " << fDetPos/CLHEP::mm //G4BestUnit( fDetPos,"Length")
      << G4endl;
 }
 

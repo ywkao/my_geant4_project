@@ -127,8 +127,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       G4double pixel_length = scale*default_pixel_length; // z direction
       G4double pixel_width  = scale*default_pixel_width ; // x direction
       G4double pixel_thick  = default_pixel_thick ; // y direction
-      G4double space_z = 1.2*pixel_length;
-      G4double space_x = 1.2*pixel_width;
+      G4double space_z = 1.001*pixel_length;
+      G4double space_x = 1.001*pixel_width;
       G4double space_y = 3.0*pixel_thick;
 
       //+++++++++++++++++++++++++

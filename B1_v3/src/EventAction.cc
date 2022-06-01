@@ -140,7 +140,14 @@ void EventAction::EndOfEventAction(const G4Event* event)
   for (unsigned long i = 0; i < hc->GetSize(); ++i) {
     auto hit = static_cast<TrackerHit*>(hc->GetHit(i));
     //if (hit->isValidHit()) {
-      G4cout << "  hit " << i << "  detz " << hit->GetDetPos() << G4endl;
+      //G4cout << "  hit " << std::setw(3) << i << "  detector position " << hit->GetDetPos() << G4endl;
+      G4cout << "  hit " << std::setw(3) << i
+      << "  detector position ("
+      << std::setw(8) << hit->GetDetPos().getX()/CLHEP::mm << ", " 
+      << std::setw(8) << hit->GetDetPos().getY()/CLHEP::mm << ", "
+      << std::setw(8) << hit->GetDetPos().getZ()/CLHEP::mm << ")   "
+      << G4endl;
+
       fSiHitsX.push_back(hit->GetDetPos().x()/CLHEP::mm);    
       fSiHitsY.push_back(hit->GetDetPos().y()/CLHEP::mm);
       fSiHitsZ.push_back(hit->GetDetPos().z()/CLHEP::mm);
