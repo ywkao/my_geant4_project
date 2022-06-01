@@ -133,4 +133,4 @@
 #/tracker/generator/momentum 1 GeV
 #/tracker/generator/sigmaAngle 0 deg
 
-/run/beamOn 1
+/run/beamOn 10
