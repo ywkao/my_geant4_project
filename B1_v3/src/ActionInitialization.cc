@@ -52,6 +52,7 @@ void ActionInitialization::BuildForMaster() const
 {
   EventAction* eventAction = new EventAction;
   SetUserAction(new RunAction(eventAction));
+  G4cout << "ActionInitialization::BuildForMaster" << G4endl << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -64,6 +65,8 @@ void ActionInitialization::Build() const
   SetUserAction(eventAction);
 
   SetUserAction(new RunAction(eventAction));
+
+  G4cout << "ActionInitialization::Build" << G4endl << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

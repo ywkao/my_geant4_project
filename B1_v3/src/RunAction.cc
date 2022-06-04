@@ -109,6 +109,7 @@ RunAction::RunAction(EventAction* eventAction)
   // Set ntuple output file
   analysisManager->SetNtupleFileName(0, "Output");
   
+  G4cout << "RunAction::Constructor" << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -139,6 +140,7 @@ void RunAction::BeginOfRunAction(const G4Run*)
   // it can be overwritten in a macro
   analysisManager->OpenFile();
 
+  G4cout << G4endl << "RunAction::BeginOfRunAction" << G4endl << G4endl;
 
 }
 

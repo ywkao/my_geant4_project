@@ -44,6 +44,7 @@ TrackerSD::TrackerSD(const G4String& name,
  : G4VSensitiveDetector(name)
 {
   collectionName.insert(hitsCollectionName);
+  G4cout << "TrackerSD::Constructor" << G4endl << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -112,8 +113,7 @@ void TrackerSD::EndOfEvent(G4HCofThisEvent*)
 {
   // if ( verboseLevel>1 ) {
      G4int nofHits = fHitsCollection->entries();
-     G4cout << G4endl
-            << "TrackerSD::EndOfEvent -------->Hits Collection: in this event they are " << nofHits
+     G4cout << "TrackerSD::EndOfEvent -------->Hits Collection: in this event they are " << nofHits
             << " hits in the tracker detectors: " << G4endl;
      for ( G4int i=0; i<nofHits; i++ ) (*fHitsCollection)[i]->Print();
   // }

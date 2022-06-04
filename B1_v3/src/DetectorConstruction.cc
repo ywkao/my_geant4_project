@@ -69,12 +69,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 {
   // Get nist material manager
   G4NistManager* nist = G4NistManager::Instance();
-
-  // Envelope parameters
-  G4double env_sizeXY = 20*cm, env_sizeZ = 30*cm;
   G4Material* air  = nist->FindOrBuildMaterial("G4_AIR");
-  G4Material* env_mat = nist->FindOrBuildMaterial("G4_WATER");
-  G4Material* material_silicon = nist->FindOrBuildMaterial("G4_Si");
+  G4Material* silicon = G4NistManager::Instance()->FindOrBuildMaterial("G4_Si");
+
 
   // Option to switch on/off checking of volumes overlaps
   G4bool checkOverlaps = true;
@@ -97,8 +94,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double default_pixel_length = 200*pixel_unit; // z direction
   G4double default_pixel_width  = 100*pixel_unit; // x direction
   G4double default_pixel_thick  = 300*pixel_unit; // y direction
-
-  G4Material* targetMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_Si");
 
   // world
   G4Box* worldSolid = new G4Box("World", 0.5*worldXSize, 0.5*worldYZSize, 0.5*worldYZSize);
@@ -123,9 +118,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       G4String name_obj;
       G4String name_log;
       G4String name_vol;
+      G4String layer_name = "layer";
+      //G4String layer_name = "layer" + idx;
 
       G4double scale = locations[i] / locations[0];
-      G4cout << ">>> mycheck: " << i << ", scale = " << scale << G4endl;
+      G4cout << ">>> mycheck: " << i << ", scale = " << scale << ", layer_name = " << layer_name << G4endl;
       G4double pixel_length = scale*default_pixel_length; // z direction
       G4double pixel_width  = scale*default_pixel_width ; // x direction
       G4double pixel_thick  = default_pixel_thick ; // y direction
@@ -141,7 +138,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       name_obj = "pixel_box";
       name_log = "pixel_LV";
       G4Box *pixel = new G4Box(name_obj, 0.5*pixel_width, 0.5*pixel_thick, 0.5*pixel_length);
-      G4LogicalVolume *pixel_logic = new G4LogicalVolume(pixel, targetMaterial, name_log);
+      G4LogicalVolume *pixel_logic = new G4LogicalVolume(pixel, silicon, name_log);
 
       //+++++++++++++++++++++++++
       // 2D array
@@ -177,49 +174,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       //++++++++++++++++++++++++++++++
       // place element in detector
       //++++++++++++++++++++++++++++++
-      //G4String layer_name = "layer" + idx;
-      G4String layer_name = "layer";
-      G4cout << ">>> layer_name = " << layer_name << G4endl;
       new G4PVPlacement(nullptr, G4ThreeVector(0.,locations[i],0.), two_dim_array_logic, layer_name, tracker_LV, i, fCheckOverlaps);
   }
 
   fScoringVolume = tracker_LV;
 
   //----------------------------------------------------------------------------------------------------
-  /*
-  //++++++++++++++++++++++++++++++
-  // World
-  //++++++++++++++++++++++++++++++
-  G4double world_sizeXY = 1.2*env_sizeXY;
-  G4double world_sizeZ  = 1.2*env_sizeZ;
-  G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
 
-  G4Box* solidWorld = new G4Box("World", 0.5*world_sizeXY, 0.5*world_sizeXY, 0.5*world_sizeZ);
-  G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, world_mat, "World");
-  G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "World", 0, false, 0, checkOverlaps);
-
-  //++++++++++++++++++++++++++++++
-  // Envelope
-  //++++++++++++++++++++++++++++++
-  G4Box* solidEnv = new G4Box("Envelope", 0.5*env_sizeXY, 0.5*env_sizeXY, 0.5*env_sizeZ);
-  G4LogicalVolume* logicEnv = new G4LogicalVolume(solidEnv, env_mat, "Envelope");
-  new G4PVPlacement(0, G4ThreeVector(), logicEnv, "Envelope", logicWorld, false, 0, checkOverlaps);
-  fScoringVolume = logicEnv;
-
-  //++++++++++++++++++++
-  // box 
-  //++++++++++++++++++++
-  G4double box_sizeXY = 1*cm;
-  G4double box_sizeZ  = 1*cm;
-  G4Box* box = new G4Box("box", 0.5*box_sizeXY, 0.5*box_sizeXY, 0.5*box_sizeZ);
-  G4LogicalVolume* box_log = new G4LogicalVolume(box, material_silicon, "boxL");
-  new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 0.), box_log, "boxP", logicEnv, false, 2, true);
-  */
-
-  //++++++++++++++++++++++++++++++
-  //always return the physical World
-  //++++++++++++++++++++++++++++++
-  //return physWorld;
   return worldPV;
 }
 
@@ -227,21 +188,17 @@ void DetectorConstruction::ConstructSDandField()
 {
   // Sensitive detectors
 
+  G4cout << G4endl << "DetectorConstruction::ConstructSDandField" << G4endl;
+
   G4String trackerChamberSDname = "/TrackerChamberSD";
   TrackerSD* aTrackerSD = new TrackerSD(trackerChamberSDname,"TrackerHitsCollection");
   G4SDManager::GetSDMpointer()->AddNewDetector(aTrackerSD);
   // Setting aTrackerSD to all logical volumes with the same name
-  // of "Chamber_LV".
-  // SetSensitiveDetector("Shape1", aTrackerSD, true);
-  // SetSensitiveDetector("Shape2", aTrackerSD, true);
-  //SetSensitiveDetector("logic-Disc", aTrackerSD, true);
-  //SetSensitiveDetector("boxL", aTrackerSD, true);
   SetSensitiveDetector("pixel_LV", aTrackerSD, true);
   //SetSensitiveDetector("logic-Target", aTrackerSD, true);
   
   // Create global magnetic field messenger.
-  // Uniform magnetic field is then created automatically if
-  // the field value is not zero.
+  // Uniform magnetic field is then created automatically if the field value is not zero.
   G4ThreeVector fieldValue = G4ThreeVector(0, 0, 2*tesla);
   fMagFieldMessenger = new G4GlobalMagFieldMessenger(fieldValue);
   fMagFieldMessenger->SetVerboseLevel(1);

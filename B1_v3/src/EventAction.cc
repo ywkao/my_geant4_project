@@ -40,31 +40,31 @@ using std::array;
 using std::vector;
 
 
-namespace {
-
-// Utility function which finds a hit collection with the given Id
-// and print warnings if not found
-G4VHitsCollection* GetHC(const G4Event* event, G4int collId) {
-  auto hce = event->GetHCofThisEvent();
-  if (!hce) {
-      G4ExceptionDescription msg;
-      msg << "No hits collection of this event found." << G4endl;
-      G4Exception("EventAction::EndOfEventAction()",
-                  "Code001", JustWarning, msg);
-      return nullptr;
-  }
-
-  auto hc = hce->GetHC(collId);
-  if ( ! hc) {
-    G4ExceptionDescription msg;
-    msg << "Hits collection " << collId << " of this event not found." << G4endl;
-    G4Exception("EventAction::EndOfEventAction()",
-                "Code001", JustWarning, msg);
-  }
-  return hc;
-}
-
-}
+//namespace {
+//
+//// Utility function which finds a hit collection with the given Id
+//// and print warnings if not found
+//G4VHitsCollection* GetHC(const G4Event* event, G4int collId) {
+//  auto hce = event->GetHCofThisEvent();
+//  if (!hce) {
+//      G4ExceptionDescription msg;
+//      msg << "No hits collection of this event found." << G4endl;
+//      G4Exception("EventAction::EndOfEventAction()",
+//                  "Code001", JustWarning, msg);
+//      return nullptr;
+//  }
+//
+//  auto hc = hce->GetHC(collId);
+//  if ( ! hc) {
+//    G4ExceptionDescription msg;
+//    msg << "Hits collection " << collId << " of this event not found." << G4endl;
+//    G4Exception("EventAction::EndOfEventAction()",
+//                "Code001", JustWarning, msg);
+//  }
+//  return hc;
+//}
+//
+//}
 
 namespace B1
 {
@@ -75,6 +75,8 @@ EventAction::EventAction()
 {
   // set printing per each event
   G4RunManager::GetRunManager()->SetPrintProgress(1);
+
+  G4cout << "EventAction::Constructor" << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -94,6 +96,11 @@ void EventAction::BeginOfEventAction(const G4Event*)
   fSiHitsEdep.clear();
   fDetID.clear();
 
+  G4cout << G4endl
+  << "------------------------------------------------------------------------------------------------------------------------" << G4endl
+  << "EventAction::BeginOfEventAction" << G4endl
+  << "------------------------------------------------------------------------------------------------------------------------" << G4endl
+  << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -105,9 +112,12 @@ void EventAction::EndOfEventAction(const G4Event* event)
   auto primary = event->GetPrimaryVertex(0)->GetPrimary(0);
   G4int eventID = event->GetEventID();
 
+  G4cout << G4endl
+    << "EventAction::EndOfEventAction : Event " << event->GetEventID()
+    << G4endl;
+
   G4cout
-    << G4endl
-    << "EventAction::EndOfEventAction :  Event " << event->GetEventID() << " >>> Simulation truth : "
+    << "EventAction::EndOfEventAction : Simulation truth : "
     << primary->GetG4code()->GetParticleName()
     << " " << primary->GetMomentum() << G4endl;
 
@@ -117,7 +127,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
   // accumulate statistics in run action // Well, I'm not sure how to do
   //fRunAction->AddEdep(fEdep);
   
-  G4cout << ">>> start to fill the hit vector " << G4endl;
+  G4cout << "EventAction::EndOfEventAction : start to fill the hit vector " << G4endl;
   for (unsigned long i = 0; i < hc->GetSize(); ++i) {
     auto hit = static_cast<TrackerHit*>(hc->GetHit(i));
     //if (hit->isValidHit()) {
@@ -157,6 +167,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
   analysisManager->AddNtupleRow();
 
+  G4cout << G4endl << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

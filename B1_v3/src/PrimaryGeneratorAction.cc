@@ -59,6 +59,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   fParticleGun->SetParticleEnergy(500.*MeV);
   fParticleGun->SetParticleEnergy(2.*GeV);
   fParticleGun->SetParticleEnergy(1.*GeV);
+  G4cout << G4endl << "PrimaryGeneratorAction::Constructor" << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
