@@ -90,8 +90,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double yt = cm; // unit in y coordinate, cm
   std::vector<G4double> locations = { 5*yt, 15*yt, 25*yt, 35*yt, 45*yt, 55*yt, 65*yt, 75*yt, 85*yt, 100*yt };
 
-  G4int n_pixels = 500; // 10
-  G4double pixel_unit   = micrometer; // 50*micrometer
+  //G4int n_pixels = 500; // 10
+  //G4double pixel_unit   = micrometer; // 50*micrometer
+  G4int n_pixels = 10; // quick test
+  G4double pixel_unit   = 50*micrometer; // quick test
   G4double default_pixel_length = 200*pixel_unit; // z direction
   G4double default_pixel_width  = 100*pixel_unit; // x direction
   G4double default_pixel_thick  = 300*pixel_unit; // y direction
