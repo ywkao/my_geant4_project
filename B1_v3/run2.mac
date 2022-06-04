@@ -11,7 +11,7 @@
 /run/verbose 2
 
 /gun/particle mu-
-/gun/energy 500 MeV
+/gun/energy 1 GeV
 
-/run/printProgress 10
-/run/beamOn 100
+/run/printProgress 100
+/run/beamOn 10000
