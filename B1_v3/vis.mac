@@ -104,7 +104,17 @@
 # To get nice view
 # Make the "World" box invisible
 /vis/geometry/set/visibility World 0 false
-/vis/geometry/set/visibility two_dim_array_LV 0 false
+#/vis/geometry/set/visibility two_dim_array_LV 0 false
+/vis/geometry/set/visibility two_dim_array_LV-layer0 0 false
+/vis/geometry/set/visibility two_dim_array_LV-layer1 0 false
+/vis/geometry/set/visibility two_dim_array_LV-layer2 0 false
+/vis/geometry/set/visibility two_dim_array_LV-layer3 0 false
+/vis/geometry/set/visibility two_dim_array_LV-layer4 0 false
+/vis/geometry/set/visibility two_dim_array_LV-layer5 0 false
+/vis/geometry/set/visibility two_dim_array_LV-layer6 0 false
+/vis/geometry/set/visibility two_dim_array_LV-layer7 0 false
+/vis/geometry/set/visibility two_dim_array_LV-layer8 0 false
+/vis/geometry/set/visibility two_dim_array_LV-layer9 0 false
 
 # "Envelope" is transparent blue to represent water
 #/vis/geometry/set/colour Envelope 0 0 0 1 .3

@@ -130,24 +130,22 @@ void EventAction::EndOfEventAction(const G4Event* event)
   G4cout << "EventAction::EndOfEventAction : start to fill the hit vector " << G4endl;
   for (unsigned long i = 0; i < hc->GetSize(); ++i) {
     auto hit = static_cast<TrackerHit*>(hc->GetHit(i));
-    //if (hit->isValidHit()) {
-      G4cout << "  hit " << std::setw(3) << i
-      << "  DetId: " << std::setw(3) << hit->GetDetectorNb()
-      << "  detector position ("
-      << std::setw(8) << hit->GetDetPos().getX()/CLHEP::mm << ", " 
-      << std::setw(8) << hit->GetDetPos().getY()/CLHEP::mm << ", "
-      << std::setw(8) << hit->GetDetPos().getZ()/CLHEP::mm << ")   "
-      << "  Edep: " << hit->GetEdep()/CLHEP::keV
-      << G4endl;
+    G4cout << "  hit " << std::setw(3) << i
+    << "  DetId: " << std::setw(3) << hit->GetDetectorNb()
+    << "  detector position ("
+    << std::setw(8) << hit->GetDetPos().getX()/CLHEP::mm << ", " 
+    << std::setw(8) << hit->GetDetPos().getY()/CLHEP::mm << ", "
+    << std::setw(8) << hit->GetDetPos().getZ()/CLHEP::mm << ")   "
+    << "  Edep: " << hit->GetEdep()/CLHEP::keV
+    << G4endl;
 
-      fEdep += hit->GetEdep();
+    //fEdep += hit->GetEdep(); // sum up in src/SteppingAction.cc
 
-      fSiHitsX.push_back(hit->GetDetPos().x()/CLHEP::mm);    
-      fSiHitsY.push_back(hit->GetDetPos().y()/CLHEP::mm);
-      fSiHitsZ.push_back(hit->GetDetPos().z()/CLHEP::mm);
-      fSiHitsEdep.push_back(hit->GetEdep()/CLHEP::keV);
-      fDetID.push_back(hit->GetDetectorNb());
-      //}
+    fSiHitsX.push_back(hit->GetDetPos().x()/CLHEP::mm);    
+    fSiHitsY.push_back(hit->GetDetPos().y()/CLHEP::mm);
+    fSiHitsZ.push_back(hit->GetDetPos().z()/CLHEP::mm);
+    fSiHitsEdep.push_back(hit->GetEdep()/CLHEP::keV);
+    fDetID.push_back(hit->GetDetectorNb());
   }
 
   G4cout << " fEdep " << fEdep/CLHEP::keV << G4endl;

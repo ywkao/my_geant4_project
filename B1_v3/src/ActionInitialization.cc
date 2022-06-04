@@ -65,6 +65,7 @@ void ActionInitialization::Build() const
   SetUserAction(eventAction);
 
   SetUserAction(new RunAction(eventAction));
+  SetUserAction(new SteppingAction(eventAction));
 
   G4cout << "ActionInitialization::Build" << G4endl << G4endl;
 }

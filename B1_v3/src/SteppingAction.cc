@@ -43,7 +43,10 @@ namespace B1
 
 SteppingAction::SteppingAction(EventAction* eventAction)
 : fEventAction(eventAction)
-{}
+{
+  G4cout << "SteppingAction::Constructor" << G4endl;
+}
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -67,10 +70,12 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
       ->GetVolume()->GetLogicalVolume();
 
   // no screen output. It is likely that SteppingAction() is not used in the example code
-  G4cout << ">>>>>> UserSteppingAction: volume = " << volume->GetName() << G4endl;
+  G4cout << "SteppingAction::UserSteppingAction, fScoringVolume: " << fScoringVolume->GetName() << ", volume of current step: " <<  volume->GetName();
+  if (volume->GetName() == fScoringVolume->GetName()) G4cout << ", yes!" << G4endl; else G4cout << ", no!" << G4endl;
 
   // check if we are in scoring volume
-  if (volume != fScoringVolume) return;
+  //if (volume != fScoringVolume) return;
+  if (volume->GetName() != fScoringVolume->GetName()) return;
 
   // collect energy deposited in this step
   G4double edepStep = step->GetTotalEnergyDeposit();

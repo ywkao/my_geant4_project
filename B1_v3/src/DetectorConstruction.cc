@@ -72,9 +72,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Material* air  = nist->FindOrBuildMaterial("G4_AIR");
   G4Material* silicon = G4NistManager::Instance()->FindOrBuildMaterial("G4_Si");
 
-
   // Option to switch on/off checking of volumes overlaps
-  G4bool checkOverlaps = true;
   G4bool fCheckOverlaps = true;
 
   //==================================================
@@ -105,9 +103,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double detYZSize = occupied_fraction*worldYZSize;
   G4Box *tracker = new G4Box("tracker", 0.5*detXSize, 0.5*detYZSize, 0.5*detYZSize);
   G4LogicalVolume *tracker_LV = new G4LogicalVolume(tracker, air, "tracker_LV");
-  G4VPhysicalVolume* tracker_PV = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), tracker_LV, "tracker_PV", worldLV, 1, fCheckOverlaps);
+  new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), tracker_LV, "tracker_PV", worldLV, 1, fCheckOverlaps);
 
   //----------------------------------------------------------------------------------------------------
+
+  G4LogicalVolume *pixel_logic[10];
 
   for(unsigned int i=0; i<locations.size(); ++i)
   {
@@ -128,7 +128,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       G4double pixel_thick  = default_pixel_thick ; // y direction
       G4double space_z = 1.01*pixel_length;
       G4double space_x = 1.01*pixel_width;
-      G4double space_y = 3.0*pixel_thick;
 
       //+++++++++++++++++++++++++
       // pixel
@@ -138,17 +137,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       name_obj = "pixel_box";
       name_log = "pixel_LV";
       G4Box *pixel = new G4Box(name_obj, 0.5*pixel_width, 0.5*pixel_thick, 0.5*pixel_length);
-      G4LogicalVolume *pixel_logic = new G4LogicalVolume(pixel, silicon, name_log);
+      //G4LogicalVolume *pixel_logic = new G4LogicalVolume(pixel, silicon, name_log);
+      pixel_logic[i] = new G4LogicalVolume(pixel, silicon, name_log);
 
       //+++++++++++++++++++++++++
       // 2D array
       //+++++++++++++++++++++++++
-      //name_obj = "box_two_dim_array" + tag;
-      //name_log = "logic-two_dim_array" + tag;
-      //name_vol = "two_dim_array" + tag;
-      name_obj = "two_dim_array_box";
-      name_log = "two_dim_array_LV";
-      name_vol = "two_dim_array_PV";
+      //name_obj = "two_dim_array_box";
+      //name_log = "two_dim_array_LV";
+      //name_vol = "two_dim_array_PV";
+      name_obj = "two_dim_array_box" + tag;
+      name_log = "two_dim_array_LV" + tag;
+      name_vol = "two_dim_array_PV" + tag;
       G4double two_dim_array_size = occupied_fraction*worldYZSize;
       G4double two_dim_array_thick = pixel_thick;
       G4Box *two_dim_array = new G4Box(name_obj, 0.5*two_dim_array_size, 0.5*two_dim_array_thick, 0.5*two_dim_array_size);
@@ -166,7 +166,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
               name_vol = "pixel";
               G4double XPosition = firstXPosition + x*space_x;
               G4ThreeVector position = G4ThreeVector(XPosition, 0., ZPosition);
-              new G4PVPlacement(nullptr, position, pixel_logic, name_vol, two_dim_array_logic, copyNo, fCheckOverlaps);
+              new G4PVPlacement(nullptr, position, pixel_logic[i], name_vol, two_dim_array_logic, copyNo, fCheckOverlaps);
               copyNo++;
           }
       }
@@ -177,7 +177,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       new G4PVPlacement(nullptr, G4ThreeVector(0.,locations[i],0.), two_dim_array_logic, layer_name, tracker_LV, i, fCheckOverlaps);
   }
 
-  fScoringVolume = tracker_LV;
+  //fScoringVolume = tracker_LV;
+  fScoringVolume = pixel_logic[0];
 
   //----------------------------------------------------------------------------------------------------
 
@@ -195,7 +196,6 @@ void DetectorConstruction::ConstructSDandField()
   G4SDManager::GetSDMpointer()->AddNewDetector(aTrackerSD);
   // Setting aTrackerSD to all logical volumes with the same name
   SetSensitiveDetector("pixel_LV", aTrackerSD, true);
-  //SetSensitiveDetector("logic-Target", aTrackerSD, true);
   
   // Create global magnetic field messenger.
   // Uniform magnetic field is then created automatically if the field value is not zero.

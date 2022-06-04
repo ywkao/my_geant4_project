@@ -60,7 +60,7 @@ class TrackerHit : public G4VHit
     inline void  operator delete(void*);
 
   
-  //bool isValidHit() const {return _isValidHit;}
+    //bool isValidHit() const {return _isValidHit;}
     // methods from base class
     void Draw() override;
     void Print() override;
@@ -86,7 +86,7 @@ class TrackerHit : public G4VHit
     G4ThreeVector fPos;
     G4ThreeVector fDetPos;
 
-  bool _isValidHit;
+    bool _isValidHit;
 
 };
 
