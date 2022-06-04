@@ -89,7 +89,6 @@ EventAction::~EventAction()
 void EventAction::BeginOfEventAction(const G4Event*)
 {
   fEdep = 0.;
-  
   fSiHitsX.clear();
   fSiHitsY.clear();
   fSiHitsZ.clear();
@@ -124,7 +123,8 @@ void EventAction::EndOfEventAction(const G4Event* event)
   G4VHitsCollection* hc = event->GetHCofThisEvent()->GetHC(0);
   auto nhit = hc->GetSize();
 
-  // accumulate statistics in run action // Well, I'm not sure how to do
+  // not sure how to do this   
+  // accumulate statistics in run action
   //fRunAction->AddEdep(fEdep);
   
   G4cout << "EventAction::EndOfEventAction : start to fill the hit vector " << G4endl;
@@ -148,7 +148,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
     fDetID.push_back(hit->GetDetectorNb());
   }
 
-  G4cout << " fEdep " << fEdep/CLHEP::keV << G4endl;
+  G4cout << " fEdep " << fEdep/CLHEP::keV << " keV" << G4endl;
 
   // Get analysis manager
   auto analysisManager = G4AnalysisManager::Instance();
@@ -157,7 +157,6 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
   analysisManager->FillNtupleIColumn(0, eventID);
   analysisManager->FillNtupleIColumn(1, fEdep/CLHEP::keV);
-
   analysisManager->FillNtupleIColumn(2,nhit);
   analysisManager->FillNtupleDColumn(3,primary->GetMomentum().x());
   analysisManager->FillNtupleDColumn(4,primary->GetMomentum().y());

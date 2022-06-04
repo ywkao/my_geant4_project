@@ -69,11 +69,11 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
     = step->GetPreStepPoint()->GetTouchableHandle()
       ->GetVolume()->GetLogicalVolume();
 
-  // no screen output. It is likely that SteppingAction() is not used in the example code
-  G4cout << "SteppingAction::UserSteppingAction, fScoringVolume: " << fScoringVolume->GetName() << ", volume of current step: " <<  volume->GetName();
-  if (volume->GetName() == fScoringVolume->GetName()) G4cout << ", yes!" << G4endl; else G4cout << ", no!" << G4endl;
 
   // check if we are in scoring volume
+  //G4cout << "SteppingAction::UserSteppingAction, fScoringVolume: " << fScoringVolume->GetName() << ", volume of current step: " <<  volume->GetName();
+  //if (volume->GetName() == fScoringVolume->GetName()) G4cout << ", yes!" << G4endl; else G4cout << ", no!" << G4endl;
+
   //if (volume != fScoringVolume) return;
   if (volume->GetName() != fScoringVolume->GetName()) return;
 
