@@ -130,8 +130,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
       G4double scale = locations[i] / locations[0];
       G4cout << ">>> mycheck: " << i << ", scale = " << scale << ", layer_name = " << layer_name << G4endl;
-      G4double pixel_length = scale*default_pixel_length; // z direction
-      G4double pixel_width  = scale*default_pixel_width ; // x direction
+      G4double pixel_length = scale*default_pixel_length; // x direction
+      G4double pixel_width  = scale*default_pixel_width ; // z direction
       G4double pixel_thick  = default_pixel_thick ; // y direction
       G4double space_z = 1.01*pixel_length;
       G4double space_x = 1.01*pixel_width;
@@ -160,7 +160,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       // ring
       G4double ring_R1 = locations[i] - 0.5*pixel_thick;
       G4double ring_R2 = std::sqrt( (locations[i]+0.5*pixel_thick)*(locations[i]+0.5*pixel_thick) + (0.5*pixel_width)*(0.5*pixel_width) );
-      G4double detector_dZ = n_sections*pixel_length;
+      G4double detector_dZ = n_sections*pixel_width*z_spacing_factor;
 
       G4Tubs* solidRing = new G4Tubs("Ring", ring_R1, ring_R2, 0.5*pixel_width, 0., twopi);
       G4LogicalVolume* logicRing = new G4LogicalVolume(solidRing, air, "Ring_LV");
@@ -195,7 +195,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       //new G4PVReplica(name_vol, one_dim_array_logic, two_dim_array_logic, kXAxis, n_pixels, space_x);
 
       // place rings within detector
-      G4double OG = -0.5*(detector_dZ + pixel_width*z_spacing_factor);
+      G4double OG = -0.5*detector_dZ;
       for (G4int iring = 0; iring < n_sections ; iring++) {
         OG += pixel_width*z_spacing_factor;
         new G4PVPlacement(0,                     //no rotation
