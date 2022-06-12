@@ -79,26 +79,20 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //==================================================
   // start of my detector
   //==================================================
-  G4double worldXSize  = 400*cm;
+  G4double worldXSize  = 200*cm;
   G4double worldYZSize = 1.25*worldXSize;
   G4double occupied_fraction = 0.96;
 
   G4double yt = cm; // unit in y coordinate, cm
-  std::vector<G4double> locations = { 5*yt, 15*yt, 25*yt, 35*yt, 45*yt, 55*yt, 65*yt, 75*yt, 85*yt, 100*yt };
+  std::vector<G4double> locations = { 5*yt, 15*yt, 25*yt, 35*yt, 45*yt, 55*yt, 65*yt, 75*yt, 85*yt, 95*yt };
 
-  // z direction parameters
-  G4double z_spacing_factor = 1.05;
-
-  //G4int n_sections = 100;
-  //G4int n_pixels = 1500;
-  //G4double pixel_unit = micrometer;
-
-  G4int n_sections = 10;
-  G4int n_pixels = 30; // quick test
-  G4double pixel_unit   = 50*micrometer; // quick test
-  G4double default_pixel_length = 200*pixel_unit; // z direction
+  //G4int n_pixels = 500; // 10
+  //G4double pixel_unit   = micrometer; // 50*micrometer
+  G4int n_pixels = 10; // quick test
+  G4double pixel_unit   = 200*micrometer; // quick test
+  G4double default_pixel_length = 100*pixel_unit; // y direction
   G4double default_pixel_width  = 100*pixel_unit; // x direction
-  G4double default_pixel_thick  = 300*pixel_unit; // y direction
+  G4double default_pixel_thick  = 300*micrometer; // z direction
 
   // world
   G4Box* worldSolid = new G4Box("World", 0.5*worldXSize, 0.5*worldYZSize, 0.5*worldYZSize);
@@ -118,8 +112,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   for(unsigned int i=0; i<locations.size(); ++i)
   {
-      //if(i>0) continue; // test one layer
-
       G4String idx = std::to_string(i);
       G4String tag = "-layer" + idx;
       G4String name_obj;
@@ -128,10 +120,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       G4String layer_name = "layer";
       //G4String layer_name = "layer" + idx;
 
-      G4double scale = locations[i] / locations[0];
+      G4double scale = locations[i] / locations[0]; scale = 1.0;
       G4cout << ">>> mycheck: " << i << ", scale = " << scale << ", layer_name = " << layer_name << G4endl;
-      G4double pixel_length = scale*default_pixel_length; // x direction
-      G4double pixel_width  = scale*default_pixel_width ; // z direction
+      G4double pixel_length = scale*default_pixel_length; // z direction
+      G4double pixel_width  = scale*default_pixel_width ; // x direction
       G4double pixel_thick  = default_pixel_thick ; // y direction
       G4double space_z = 1.01*pixel_length;
       G4double space_x = 1.01*pixel_width;
@@ -139,80 +131,42 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       //+++++++++++++++++++++++++
       // pixel
       //+++++++++++++++++++++++++
-      //name_obj = "pixel" + tag;
-      //name_log = "logic-pixel" + tag;
       name_obj = "pixel_box";
       name_log = "pixel_LV";
-      G4Box *pixel = new G4Box(name_obj, 0.5*pixel_width, 0.5*pixel_thick, 0.5*pixel_length);
-      //G4LogicalVolume *pixel_logic = new G4LogicalVolume(pixel, silicon, name_log);
+      G4Box *pixel = new G4Box(name_obj, 0.5*pixel_width, 0.5*pixel_length, 0.5*pixel_thick);
       pixel_logic[i] = new G4LogicalVolume(pixel, silicon, name_log);
 
       //+++++++++++++++++++++++++
       // 2D array
       //+++++++++++++++++++++++++
-
-      G4double dPhi = twopi/n_pixels, half_dPhi = 0.5*dPhi;
-      G4double cosdPhi = std::cos(half_dPhi);
-      G4double tandPhi = std::tan(half_dPhi);
-      //G4double ring_R1 = 0.5*cryst_dY/tandPhi;
-      //G4double ring_R2 = (ring_R1+cryst_dZ)/cosdPhi;
-
-      // ring
-      G4double ring_R1 = locations[i] - 0.5*pixel_thick;
-      G4double ring_R2 = std::sqrt( (locations[i]+0.5*pixel_thick)*(locations[i]+0.5*pixel_thick) + (0.5*pixel_width)*(0.5*pixel_width) );
-      G4double detector_dZ = n_sections*pixel_width*z_spacing_factor;
-
-      G4Tubs* solidRing = new G4Tubs("Ring", ring_R1, ring_R2, 0.5*pixel_width, 0., twopi);
-      G4LogicalVolume* logicRing = new G4LogicalVolume(solidRing, air, "Ring_LV");
-
-      // put pixelx in a ring
-      for (G4int icrys = 0; icrys < n_pixels ; icrys++) {
-        G4double phi = icrys*dPhi;
-        G4RotationMatrix rotm  = G4RotationMatrix();
-        rotm.rotateY(90*deg);
-        rotm.rotateZ(90*deg);
-        rotm.rotateZ(phi);
-        G4ThreeVector uz = G4ThreeVector(std::cos(phi),  std::sin(phi),0.);
-        G4ThreeVector position = (ring_R1+0.5*pixel_thick)*uz;
-        G4Transform3D transform = G4Transform3D(rotm,position);
-
-        new G4PVPlacement(transform,             //rotation,position
-                          pixel_logic[i],           //its logical volume
-                          "pixel",               //its name
-                          logicRing,             //its mother  volume
-                          false,                 //no boolean operation
-                          icrys,                 //copy number
-                          fCheckOverlaps);       // checking overlaps
-      }
-
       name_obj = "two_dim_array_box" + tag;
       name_log = "two_dim_array_LV" + tag;
       name_vol = "two_dim_array_PV" + tag;
       G4double two_dim_array_size = occupied_fraction*worldYZSize;
       G4double two_dim_array_thick = pixel_thick;
-      G4Tubs *two_dim_array = new G4Tubs(name_obj, ring_R1, ring_R2, z_spacing_factor*0.5*n_pixels*pixel_width, 0., twopi);
+      G4Box *two_dim_array = new G4Box(name_obj, 0.5*two_dim_array_size, 0.5*two_dim_array_size, 0.5*two_dim_array_thick);
       G4LogicalVolume *two_dim_array_logic = new G4LogicalVolume(two_dim_array, air, name_log);
       //new G4PVReplica(name_vol, one_dim_array_logic, two_dim_array_logic, kXAxis, n_pixels, space_x);
-
-      // place rings within detector
-      G4double OG = -0.5*detector_dZ;
-      for (G4int iring = 0; iring < n_sections ; iring++) {
-        OG += pixel_width*z_spacing_factor;
-        new G4PVPlacement(0,                     //no rotation
-                          G4ThreeVector(0,0,OG), //position
-                          logicRing,             //its logical volume
-                          "ring",                //its name
-                          tracker_LV,            //its mother  volume
-                          false,                 //no boolean operation
-                          iring,                 //copy number
-                          fCheckOverlaps);       // checking overlaps
+      G4int copyNo = 0;
+      G4double firstYPosition = -0.5*n_pixels*space_z + 0.5*space_z; // center of left-most pixel
+      G4double firstXPosition = -0.5*n_pixels*space_x + 0.5*space_x; // center of bottom 1d array
+      for(G4int y=0; y<n_pixels; ++y)
+      {
+          G4double YPosition = firstYPosition + y*space_z;
+          for(G4int x=0; x<n_pixels; ++x)
+          {
+              name_vol = "pixel";
+              G4double XPosition = firstXPosition + x*space_x;
+              G4ThreeVector position = G4ThreeVector(XPosition, YPosition, 0.);
+              new G4PVPlacement(nullptr, position, pixel_logic[i], name_vol, two_dim_array_logic, copyNo, fCheckOverlaps);
+              copyNo++;
+          }
       }
 
       //++++++++++++++++++++++++++++++
       // place element in detector
       //++++++++++++++++++++++++++++++
-      new G4PVPlacement(nullptr, G4ThreeVector(0.,locations[i],0.), two_dim_array_logic, layer_name, tracker_LV, i, fCheckOverlaps);
-      //break;
+      new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,locations[i]), two_dim_array_logic, layer_name, tracker_LV, i, fCheckOverlaps);
   }
 
   //fScoringVolume = tracker_LV;
