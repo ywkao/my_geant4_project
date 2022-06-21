@@ -160,4 +160,4 @@
 /gun/particle e- 
 /gun/particle mu- 
 /gun/energy 100 GeV
-/run/beamOn 1
+/run/beamOn 10

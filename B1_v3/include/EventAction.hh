@@ -47,7 +47,7 @@ class RunAction;
 class EventAction : public G4UserEventAction
 {
   public:
-    EventAction();
+    EventAction(RunAction* runAction);
     ~EventAction() override;
 
     void BeginOfEventAction(const G4Event* event) override;
@@ -55,21 +55,9 @@ class EventAction : public G4UserEventAction
 
     void AddEdep(G4double edep) { fEdep += edep; }
   
-  /// Vector of hits in silicon sensors: hit position x (in mm)
-  std::vector<G4double> fSiHitsX;
-  /// Vector of hits in silicon sensors: hit position y (in mm)
-  std::vector<G4double> fSiHitsY;
-  /// Vector of hits in silicon sensors: hit position z (in mm)
-  std::vector<G4double> fSiHitsZ;
-  /// Vector of hits in silicon sensors: hit energy (in keV)
-  std::vector<G4double> fSiHitsEdep;
-  //vector of silicon sensor ID
-  std::vector<G4int> fDetID;
-
-  
-private:
-  RunAction* fRunAction = nullptr;
-  G4double   fEdep = 0.;
+  private:
+    RunAction* fRunAction = nullptr;
+    G4double   fEdep = 0.;
 };
 
 }

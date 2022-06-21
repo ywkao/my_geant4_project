@@ -33,6 +33,7 @@
 #include "G4UserRunAction.hh"
 #include "G4Accumulable.hh"
 #include "globals.hh"
+#include <vector>
 
 class G4Run;
 
@@ -50,7 +51,7 @@ namespace B1
 class RunAction : public G4UserRunAction
 {
   public:
-    RunAction(EventAction* eventAction);
+    RunAction();
     ~RunAction() override;
 
     void BeginOfRunAction(const G4Run*) override;
@@ -58,11 +59,24 @@ class RunAction : public G4UserRunAction
 
     void AddEdep (G4double edep);
 
+    void ResetHitInfoContainer();
+    void RegisterHitInfo(G4int detID, G4double x, G4double y, G4double z, G4double e);
+
+
   private:
     G4Accumulable<G4double> fEdep = 0.;
     G4Accumulable<G4double> fEdep2 = 0.;
 
-  EventAction* fEventAction = nullptr;
+    /// Vector of hits in silicon sensors: hit position x (in mm)
+    std::vector<G4double> fSiHitsX;
+    /// Vector of hits in silicon sensors: hit position y (in mm)
+    std::vector<G4double> fSiHitsY;
+    /// Vector of hits in silicon sensors: hit position z (in mm)
+    std::vector<G4double> fSiHitsZ;
+    /// Vector of hits in silicon sensors: hit energy (in keV)
+    std::vector<G4double> fSiHitsEdep;
+    //vector of silicon sensor ID
+    std::vector<G4int> fDetID;
 
 };
 

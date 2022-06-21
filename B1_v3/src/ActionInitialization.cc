@@ -50,8 +50,7 @@ ActionInitialization::~ActionInitialization()
 
 void ActionInitialization::BuildForMaster() const
 {
-  EventAction* eventAction = new EventAction;
-  SetUserAction(new RunAction(eventAction));
+  SetUserAction(new RunAction());
   G4cout << "ActionInitialization::BuildForMaster" << G4endl << G4endl;
 }
 
@@ -61,10 +60,12 @@ void ActionInitialization::Build() const
 {
   SetUserAction(new PrimaryGeneratorAction);
 
-  auto eventAction = new EventAction;
+  auto runAction = new RunAction();
+  SetUserAction(runAction);
+
+  auto eventAction = new EventAction(runAction);
   SetUserAction(eventAction);
 
-  SetUserAction(new RunAction(eventAction));
   SetUserAction(new SteppingAction(eventAction));
 
   G4cout << "ActionInitialization::Build" << G4endl << G4endl;

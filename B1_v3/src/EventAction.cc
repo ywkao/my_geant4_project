@@ -39,39 +39,13 @@
 using std::array;
 using std::vector;
 
-
-//namespace {
-//
-//// Utility function which finds a hit collection with the given Id
-//// and print warnings if not found
-//G4VHitsCollection* GetHC(const G4Event* event, G4int collId) {
-//  auto hce = event->GetHCofThisEvent();
-//  if (!hce) {
-//      G4ExceptionDescription msg;
-//      msg << "No hits collection of this event found." << G4endl;
-//      G4Exception("EventAction::EndOfEventAction()",
-//                  "Code001", JustWarning, msg);
-//      return nullptr;
-//  }
-//
-//  auto hc = hce->GetHC(collId);
-//  if ( ! hc) {
-//    G4ExceptionDescription msg;
-//    msg << "Hits collection " << collId << " of this event not found." << G4endl;
-//    G4Exception("EventAction::EndOfEventAction()",
-//                "Code001", JustWarning, msg);
-//  }
-//  return hc;
-//}
-//
-//}
-
 namespace B1
 {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-EventAction::EventAction()
+EventAction::EventAction(RunAction* runAction)
+: fRunAction(runAction)
 {
   // set printing per each event
   G4RunManager::GetRunManager()->SetPrintProgress(1);
@@ -89,11 +63,7 @@ EventAction::~EventAction()
 void EventAction::BeginOfEventAction(const G4Event*)
 {
   fEdep = 0.;
-  fSiHitsX.clear();
-  fSiHitsY.clear();
-  fSiHitsZ.clear();
-  fSiHitsEdep.clear();
-  fDetID.clear();
+  fRunAction->ResetHitInfoContainer();
 
   G4cout << G4endl
   << "------------------------------------------------------------------------------------------------------------------------" << G4endl
@@ -125,7 +95,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
   // not sure how to do this   
   // accumulate statistics in run action
-  //fRunAction->AddEdep(fEdep);
+  fRunAction->AddEdep(fEdep);
   
   G4cout << "EventAction::EndOfEventAction : start to fill the hit vector " << G4endl;
   for (unsigned long i = 0; i < hc->GetSize(); ++i) {
@@ -139,13 +109,16 @@ void EventAction::EndOfEventAction(const G4Event* event)
     << "  Edep: " << hit->GetEdep()/CLHEP::keV
     << G4endl;
 
-    //fEdep += hit->GetEdep(); // sum up in src/SteppingAction.cc
+    // fEdep is summed up in src/SteppingAction.cc
+    //fEdep += hit->GetEdep();
 
-    fSiHitsX.push_back(hit->GetDetPos().x()/CLHEP::mm);    
-    fSiHitsY.push_back(hit->GetDetPos().y()/CLHEP::mm);
-    fSiHitsZ.push_back(hit->GetDetPos().z()/CLHEP::mm);
-    fSiHitsEdep.push_back(hit->GetEdep()/CLHEP::keV);
-    fDetID.push_back(hit->GetDetectorNb());
+    fRunAction->RegisterHitInfo(hit->GetDetectorNb(),
+                                hit->GetDetPos().x()/CLHEP::mm,
+                                hit->GetDetPos().y()/CLHEP::mm,
+                                hit->GetDetPos().z()/CLHEP::mm,
+                                hit->GetEdep()/CLHEP::keV
+                               );
+
   }
 
   G4cout << " fEdep " << fEdep/CLHEP::keV << " keV" << G4endl;
@@ -154,7 +127,6 @@ void EventAction::EndOfEventAction(const G4Event* event)
   auto analysisManager = G4AnalysisManager::Instance();
 
   analysisManager->FillH1(0, fEdep/CLHEP::MeV);
-
   analysisManager->FillNtupleIColumn(0, eventID);
   analysisManager->FillNtupleIColumn(1, fEdep/CLHEP::keV);
   analysisManager->FillNtupleIColumn(2,nhit);

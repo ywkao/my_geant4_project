@@ -48,8 +48,7 @@ namespace B1
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-RunAction::RunAction(EventAction* eventAction)
- : fEventAction(eventAction)
+RunAction::RunAction()
 {
   // add new units for dose
   //
@@ -86,25 +85,23 @@ RunAction::RunAction(EventAction* eventAction)
   analysisManager->CreateH1("Edep","Energy Deposit (MeV)", 500, 0., 100); // h1 Id = 0
 
   // Creating ntuple
-  if ( fEventAction ) {
-    G4int ntupleID = analysisManager->CreateNtuple("Hits", "Hits");
+  G4int ntupleID = analysisManager->CreateNtuple("Hits", "Hits");
 
-    analysisManager->CreateNtupleIColumn("evtNo");  // column Id = 0
-    analysisManager->CreateNtupleIColumn("Edep_keV");  // column Id = 1
+  analysisManager->CreateNtupleIColumn("evtNo");  // column Id = 0
+  analysisManager->CreateNtupleIColumn("Edep_keV");  // column Id = 1
 
-    analysisManager->CreateNtupleIColumn("NHits");  // column Id = 2
-    analysisManager->CreateNtupleDColumn("GenPX_MeV");  // column Id = 3
-    analysisManager->CreateNtupleDColumn("GenPY_MeV");  // column Id = 4
-    analysisManager->CreateNtupleDColumn("GenPZ_MeV");  // column Id = 5
+  analysisManager->CreateNtupleIColumn("NHits");  // column Id = 2
+  analysisManager->CreateNtupleDColumn("GenPX_MeV");  // column Id = 3
+  analysisManager->CreateNtupleDColumn("GenPY_MeV");  // column Id = 4
+  analysisManager->CreateNtupleDColumn("GenPZ_MeV");  // column Id = 5
 
-    analysisManager->CreateNtupleDColumn("Hits_DetX_mm", fEventAction->fSiHitsX);  // column Id = 6
-    analysisManager->CreateNtupleDColumn("Hits_DetY_mm", fEventAction->fSiHitsY);  // column Id = 7
-    analysisManager->CreateNtupleDColumn("Hits_DetZ_mm", fEventAction->fSiHitsZ);  // column Id = 8
-    analysisManager->CreateNtupleDColumn("Hits_DetE_keV", fEventAction->fSiHitsEdep);  // column Id = 9
-    analysisManager->CreateNtupleIColumn("Hits_DetID", fEventAction->fDetID);  // column Id = 10
-    
-    analysisManager->FinishNtuple(ntupleID);
-  }
+  analysisManager->CreateNtupleDColumn("Hits_DetX_mm", fSiHitsX);  // column Id = 6
+  analysisManager->CreateNtupleDColumn("Hits_DetY_mm", fSiHitsY);  // column Id = 7
+  analysisManager->CreateNtupleDColumn("Hits_DetZ_mm", fSiHitsZ);  // column Id = 8
+  analysisManager->CreateNtupleDColumn("Hits_DetE_keV", fSiHitsEdep);  // column Id = 9
+  analysisManager->CreateNtupleIColumn("Hits_DetID", fDetID);  // column Id = 10
+  
+  analysisManager->FinishNtuple(ntupleID);
   
   // Set ntuple output file
   analysisManager->SetNtupleFileName(0, "Output");
@@ -226,8 +223,26 @@ void RunAction::EndOfRunAction(const G4Run* run)
 
 void RunAction::AddEdep(G4double edep)
 {
-  fEdep  += edep;
-  fEdep2 += edep*edep;
+    fEdep  += edep;
+    fEdep2 += edep*edep;
+}
+
+void RunAction::ResetHitInfoContainer()
+{
+    fSiHitsX.clear();
+    fSiHitsY.clear();
+    fSiHitsZ.clear();
+    fSiHitsEdep.clear();
+    fDetID.clear();
+}
+
+void RunAction::RegisterHitInfo(G4int detID, G4double x, G4double y, G4double z, G4double e)
+{
+    fSiHitsX.push_back(x);    
+    fSiHitsY.push_back(y);
+    fSiHitsZ.push_back(z);
+    fSiHitsEdep.push_back(e);
+    fDetID.push_back(detID);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
