@@ -44,7 +44,7 @@ TrackerSD::TrackerSD(const G4String& name,
  : G4VSensitiveDetector(name)
 {
   collectionName.insert(hitsCollectionName);
-  G4cout << "TrackerSD::Constructor" << G4endl << G4endl;
+  G4cout << "TrackerSD::Constructor::hitsCollectionName: " << hitsCollectionName << G4endl << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -81,8 +81,7 @@ G4bool TrackerSD::ProcessHits(G4Step* aStep,
   TrackerHit* newHit = new TrackerHit();
 
   newHit->SetTrackID  (aStep->GetTrack()->GetTrackID());
-  newHit->SetDetectorNb(aStep->GetPreStepPoint()->GetTouchableHandle()
-                                               ->GetCopyNumber());
+  newHit->SetDetectorNb(aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber());
   newHit->SetEdep(edep);
   newHit->SetPos (aStep->GetPostStepPoint()->GetPosition());
   // // ... retrieve the 'pre-step' point

@@ -157,6 +157,7 @@
 #/tracker/generator/momentum 1 GeV
 #/tracker/generator/sigmaAngle 0 deg
 
-#/gun/particle e- 
-#/gun/energy 100 GeV
-#/run/beamOn 1
+/gun/particle e- 
+/gun/particle mu- 
+/gun/energy 100 GeV
+/run/beamOn 1

@@ -108,7 +108,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double detYZSize = occupied_fraction*worldYZSize;
   G4Box *tracker = new G4Box("tracker", 0.5*detXSize, 0.5*detYZSize, 0.5*detYZSize);
   G4LogicalVolume *tracker_LV = new G4LogicalVolume(tracker, envMaterial, "tracker_LV");
-  new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), tracker_LV, "tracker_PV", worldLV, 1, fCheckOverlaps);
+  new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), tracker_LV, "tracker_PV", worldLV, 999, fCheckOverlaps);
 
   //----------------------------------------------------------------------------------------------------
 
