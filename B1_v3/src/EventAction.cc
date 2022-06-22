@@ -100,14 +100,18 @@ void EventAction::EndOfEventAction(const G4Event* event)
   G4cout << "EventAction::EndOfEventAction : start to fill the hit vector " << G4endl;
   for (unsigned long i = 0; i < hc->GetSize(); ++i) {
     auto hit = static_cast<TrackerHit*>(hc->GetHit(i));
-    G4cout << "  hit " << std::setw(3) << i
-    << "  DetId: " << std::setw(3) << hit->GetDetectorNb()
-    << "  detector position ("
-    << std::setw(8) << hit->GetDetPos().getX()/CLHEP::mm << ", " 
-    << std::setw(8) << hit->GetDetPos().getY()/CLHEP::mm << ", "
-    << std::setw(8) << hit->GetDetPos().getZ()/CLHEP::mm << ")   "
-    << "  Edep: " << hit->GetEdep()/CLHEP::keV
-    << G4endl;
+    
+    bool debug = false;
+    if(debug) {
+        G4cout << "  hit " << std::setw(3) << i
+        << "  DetId: " << std::setw(3) << hit->GetDetectorNb()
+        << "  detector position ("
+        << std::setw(8) << hit->GetDetPos().getX()/CLHEP::mm << ", " 
+        << std::setw(8) << hit->GetDetPos().getY()/CLHEP::mm << ", "
+        << std::setw(8) << hit->GetDetPos().getZ()/CLHEP::mm << ")   "
+        << "  Edep: " << hit->GetEdep()/CLHEP::keV
+        << G4endl;
+    }
 
     // fEdep is summed up in src/SteppingAction.cc
     //fEdep += hit->GetEdep();

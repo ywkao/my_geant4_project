@@ -90,10 +90,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double yt = cm; // unit in y coordinate, cm
   std::vector<G4double> locations = { 5*yt, 15*yt, 25*yt, 35*yt, 45*yt, 55*yt, 65*yt, 75*yt, 85*yt, 95*yt };
 
-  //G4int n_pixels = 500; // 10
-  //G4double pixel_unit   = micrometer; // 50*micrometer
-  G4int n_pixels = 10; // quick test
-  G4double pixel_unit   = 200*micrometer; // quick test
+  G4int n_pixels = 2000;
+  G4double pixel_unit = micrometer;
+  //G4int n_pixels = 10; // quick test
+  //G4double pixel_unit = 200*micrometer; // quick test
   G4double default_pixel_length = 100*pixel_unit; // y direction
   G4double default_pixel_width  = 100*pixel_unit; // x direction
   G4double default_pixel_thick  = 300*micrometer; // z direction
@@ -173,7 +173,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       name_obj = "lead_box" + tag;
       name_log = "lead_LV" + tag;
       name_vol = "lead_PV" + tag;
-      G4double thickness_lead = 5.6*mm;
+      G4double radiation_length_lead = 5.612*mm;
+      G4double thickness_lead = radiation_length_lead;
       G4double lead_plate_dimension = n_pixels*space_y;
       G4Box *lead_box = new G4Box(name_obj, 0.5*lead_plate_dimension, 0.5*lead_plate_dimension, 0.5*thickness_lead);
       G4LogicalVolume *lead_LV = new G4LogicalVolume(lead_box, lead, name_log);

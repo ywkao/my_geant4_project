@@ -78,6 +78,8 @@ void TrackerHit::Draw()
 
 void TrackerHit::Print()
 {
+  bool debug = false;
+  if(debug) {
   G4cout
      << std::fixed << std::setprecision(3)
      << " trackID: "     << std::setw(3) << fTrackID
@@ -94,6 +96,7 @@ void TrackerHit::Print()
      //<< " Position: "    << fPos/CLHEP::mm << "   " //G4BestUnit( fPos,"Length")
      //<< " DetPosition: " << fDetPos/CLHEP::mm //G4BestUnit( fDetPos,"Length")
      << G4endl;
+  }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
