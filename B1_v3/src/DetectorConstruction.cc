@@ -83,12 +83,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //==================================================
   // start of my detector
   //==================================================
-  G4double worldXSize  = 200*cm;
+  G4double worldXSize  = 500*cm;
   G4double worldYZSize = 1.25*worldXSize;
   G4double occupied_fraction = 0.96;
 
-  G4double yt = cm; // unit in y coordinate, cm
-  std::vector<G4double> locations = { 5*yt, 15*yt, 25*yt, 35*yt, 45*yt, 55*yt, 65*yt, 75*yt, 85*yt, 95*yt };
+  G4double yt = mm; // unit in y coordinate, cm
+  std::vector<G4double> locations = {  50*yt,  75*yt, 100*yt, 125*yt, 150*yt, 175*yt, 200*yt, 225*yt, 250*yt, 275*yt,
+                                      300*yt, 325*yt, 350*yt, 375*yt, 400*yt, 425*yt, 450*yt, 475*yt, 500*yt, 525*yt,
+                                      550*yt, 575*yt, 600*yt, 625*yt, 650*yt, 675*yt,
+                                    };
 
   G4int n_pixels = 2000;
   G4double pixel_unit = micrometer;
@@ -112,7 +115,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   //----------------------------------------------------------------------------------------------------
 
-  G4LogicalVolume *pixel_logic[10];
+  G4LogicalVolume *pixel_logic[26];
 
   for(unsigned int i=0; i<locations.size(); ++i)
   {
@@ -124,7 +127,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       G4String layer_name = "layer";
       //G4String layer_name = "layer" + idx;
 
-      G4double scale = locations[i] / locations[0]; scale = 1.0;
+      // insure all hits can be detected
+      G4double scale = locations[i] / locations[0];
       G4cout << ">>> mycheck: " << i << ", scale = " << scale << ", layer_name = " << layer_name << G4endl;
       G4double pixel_length = scale*default_pixel_length; // z direction
       G4double pixel_width  = scale*default_pixel_width ; // x direction
