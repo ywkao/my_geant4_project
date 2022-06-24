@@ -234,7 +234,7 @@ void Hits::MakePlots(TString dir)
 
 void Hits::Register()
 {
-    fout = new TFile("result.root", "RECREATE");
+    fout = new TFile("./rootfiles/result.root", "RECREATE");
     fout->cd();
 
     h_Hits_DetX_mm->Write();
