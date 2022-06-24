@@ -134,7 +134,7 @@
 /vis/geometry/set/visibility two_dim_array_LV-layer25 0 false
 
 # set transparent color to represent materials (red/green/blue)
-/vis/geometry/set/colour tracker_LV 0 0 0 1 .2
+/vis/geometry/set/colour tracker_LV 0 0 0 1 .1
 /vis/geometry/set/colour lead_LV-layer0  0 1 0 0 .2
 /vis/geometry/set/colour lead_LV-layer1  0 1 0 0 .2
 /vis/geometry/set/colour lead_LV-layer2  0 1 0 0 .2
@@ -162,32 +162,32 @@
 /vis/geometry/set/colour lead_LV-layer24 0 1 0 0 .2
 /vis/geometry/set/colour lead_LV-layer25 0 1 0 0 .2
 
-#/vis/geometry/set/colour pcb_LV-layer0  0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer1  0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer2  0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer3  0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer4  0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer5  0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer6  0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer7  0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer8  0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer9  0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer10 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer11 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer12 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer13 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer14 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer15 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer16 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer17 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer18 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer19 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer20 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer21 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer22 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer23 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer24 0 0 1 0 .2
-#/vis/geometry/set/colour pcb_LV-layer25 0 0 1 0 .2
+/vis/geometry/set/colour pcb_LV-layer0  0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer1  0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer2  0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer3  0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer4  0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer5  0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer6  0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer7  0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer8  0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer9  0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer10 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer11 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer12 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer13 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer14 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer15 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer16 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer17 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer18 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer19 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer20 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer21 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer22 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer23 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer24 0 0 1 0 .5
+/vis/geometry/set/colour pcb_LV-layer25 0 0 1 0 .5
 
 /vis/viewer/set/style surface
 /vis/viewer/set/hiddenMarker true

@@ -74,22 +74,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Material* galactic = nist -> FindOrBuildMaterial("G4_Galactic");
   G4Material* silicon  = nist -> FindOrBuildMaterial("G4_Si");
   G4Material* lead     = nist -> FindOrBuildMaterial("G4_Pb");
+  G4Material* envMaterial = galactic;
 
-  // segmentation violation appears when defining PCB...
-  G4Material* pcb      = new G4Material("PCB", 1.70*g/cm3, 5);
+  G4bool isotopes = false;
+  G4Element* Si = nist->FindOrBuildElement("Si", isotopes);
+  G4Element* O  = nist->FindOrBuildElement("O" , isotopes);
+  G4Element* C  = nist->FindOrBuildElement("C" , isotopes);
+  G4Element* H  = nist->FindOrBuildElement("H" , isotopes);
+  G4Element* Br = nist->FindOrBuildElement("Br", isotopes);
 
-  //G4Material* C3H8 = new G4Material("C3H8", 3.758*mg/cm3, 2, kStateGas, 293.15*kelvin,2.*atmosphere);
-  //G4Material* pcb  = new G4Material("PCB", 1.70*g/cm3, 5, kStateSolid, 293.15*kelvin, 1.*atmosphere);
-  //pcb->AddElementByMassFraction(nist->FindOrBuildElement("G4_Si"), 0.18077359  );
-  //pcb->AddElementByMassFraction(nist->FindOrBuildElement("G4_O" ), 0.4056325   );
-  //pcb->AddElementByMassFraction(nist->FindOrBuildElement("G4_C" ), 0.27804208  );
-  //pcb->AddElementByMassFraction(nist->FindOrBuildElement("G4_H" ), 0.068442752 );
-  //pcb->AddElementByMassFraction(nist->FindOrBuildElement("G4_Br"), 0.067109079 );
+  G4Material* pcb = new G4Material("pcb", 1.70*g/cm3, 5);
+  pcb->AddElement(Si , 0.18077359);
+  pcb->AddElement(O  , 0.4056325);
+  pcb->AddElement(C  , 0.27804208);
+  pcb->AddElement(H  , 0.068442752);
+  pcb->AddElement(Br , 0.067109079);
 
+  // length
   G4double radiation_length_lead = 5.612*mm;
   G4double thickness_pcb = 1.60*mm;
-
-  G4Material* envMaterial = galactic;
 
   // Option to switch on/off checking of volumes overlaps
   G4bool fCheckOverlaps = true;
@@ -198,9 +201,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       //+++++++++++++++++++++++++
       G4double plate_dimension = n_pixels*space_y;
 
-      //name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
-      //G4Box *pcb_box = new G4Box(name_obj, 0.5*plate_dimension, 0.5*plate_dimension, 0.5*thickness_pcb);
-      //G4LogicalVolume *pcb_LV = new G4LogicalVolume(pcb_box, pcb, name_log);
+      name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
+      G4Box *pcb_box = new G4Box(name_obj, 0.5*plate_dimension, 0.5*plate_dimension, 0.5*thickness_pcb);
+      G4LogicalVolume *pcb_LV = new G4LogicalVolume(pcb_box, pcb, name_log);
 
       name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
       G4double thickness_lead = radiation_length_lead * factor_passive_layer[i];
@@ -209,9 +212,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
       // place pcb before each of odd layers
       if(i%2==0) {
-        //name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
-        //position = G4ThreeVector(0., 0., locations[i] - 0.5*pixel_thick);
-        //new G4PVPlacement(nullptr, position, pcb_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+        name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
+        position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_pcb - 0.5*pixel_thick);
+        new G4PVPlacement(nullptr, position, pcb_LV, name_vol, tracker_LV, i, fCheckOverlaps);
 
         name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
         position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*thickness_pcb - 0.5*pixel_thick);
