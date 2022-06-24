@@ -90,13 +90,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double yt = mm; // unit in y coordinate, cm
   std::vector<G4double> locations = {  50*yt,  75*yt, 100*yt, 125*yt, 150*yt, 175*yt, 200*yt, 225*yt, 250*yt, 275*yt,
                                       300*yt, 325*yt, 350*yt, 375*yt, 400*yt, 425*yt, 450*yt, 475*yt, 500*yt, 525*yt,
-                                      550*yt, 575*yt, 600*yt, 625*yt, 650*yt, 675*yt,
+                                      550*yt, 575*yt, 600*yt, 625*yt, 650*yt, 675*yt
                                     };
 
-  G4int n_pixels = 2000;
-  G4double pixel_unit = micrometer;
-  //G4int n_pixels = 10; // quick test
-  //G4double pixel_unit = 200*micrometer; // quick test
+  std::vector<G4double> factor_passive_layer = {
+                                      0.564, 1.003, 0.98, 1.002, 0.979, 1.003, 0.978, 1.003, 0.978, 1.003,
+                                      0.979, 1.002, 0.979, 1.002, 0.979, 1.003, 0.978, 1.003, 1.557, 1.003,
+                                      1.558, 1.002, 1.558, 1.003, 1.557, 1.003
+                                    };
+
+  //G4int n_pixels = 2000;
+  //G4double pixel_unit = micrometer;
+  G4int n_pixels = 20; // quick test
+  G4double pixel_unit = 100*micrometer; // quick test
   G4double default_pixel_length = 100*pixel_unit; // y direction
   G4double default_pixel_width  = 100*pixel_unit; // x direction
   G4double default_pixel_thick  = 300*micrometer; // z direction
@@ -178,7 +184,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       name_log = "lead_LV" + tag;
       name_vol = "lead_PV" + tag;
       G4double radiation_length_lead = 5.612*mm;
-      G4double thickness_lead = radiation_length_lead;
+      G4double thickness_lead = radiation_length_lead * factor_passive_layer[i];
       G4double lead_plate_dimension = n_pixels*space_y;
       G4Box *lead_box = new G4Box(name_obj, 0.5*lead_plate_dimension, 0.5*lead_plate_dimension, 0.5*thickness_lead);
       G4LogicalVolume *lead_LV = new G4LogicalVolume(lead_box, lead, name_log);
