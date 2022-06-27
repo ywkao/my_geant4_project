@@ -98,6 +98,10 @@ G4bool TrackerSD::ProcessHits(G4Step* aStep,
     GetTopTransform().Inverse().TransformPoint(origin);  
   
   newHit->SetDetPos(globalOrigin);
+
+  G4LogicalVolume* volume = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
+  G4bool is_in_active_volume = volume->GetName() == "pixel_LV";
+  newHit->SetGoodHit(is_in_active_volume);
   
   fHitsCollection->insert( newHit );
 

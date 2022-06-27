@@ -66,18 +66,20 @@ class TrackerHit : public G4VHit
     void Print() override;
 
     // Set methods
-    void SetTrackID  (G4int track)      { fTrackID = track; };
-    void SetDetectorNb(G4int det)      { fDetectorNb = det; };
-    void SetEdep     (G4double de)      { fEdep = de; };
-    void SetPos      (G4ThreeVector xyz){ fPos = xyz; };
-    void SetDetPos      (G4ThreeVector xyz){ fDetPos = xyz; };
+    void SetTrackID  (G4int track)       { fTrackID    = track; };
+    void SetDetectorNb(G4int det)        { fDetectorNb = det;   };
+    void SetEdep     (G4double de)       { fEdep       = de;    };
+    void SetPos      (G4ThreeVector xyz) { fPos        = xyz;   };
+    void SetDetPos   (G4ThreeVector xyz) { fDetPos     = xyz;   };
+    void SetGoodHit  (G4bool good)       { fGood       = good;  }; // is in active layer
 
     // Get methods
-    G4int GetTrackID() const     { return fTrackID; };
-    G4int GetDetectorNb() const   { return fDetectorNb; };
-    G4double GetEdep() const     { return fEdep; };
-    G4ThreeVector GetPos() const { return fPos; };
-    G4ThreeVector GetDetPos() const { return fDetPos; };
+    G4int GetTrackID() const        { return fTrackID;    };
+    G4int GetDetectorNb() const     { return fDetectorNb; };
+    G4double GetEdep() const        { return fEdep;       };
+    G4ThreeVector GetPos() const    { return fPos;        };
+    G4ThreeVector GetDetPos() const { return fDetPos;     };
+    G4bool IsGoodHit() const        { return fGood;       }; // is in active layer
 
   private:
     G4int         fTrackID = -1;
@@ -85,6 +87,7 @@ class TrackerHit : public G4VHit
     G4double      fEdep = 0.;
     G4ThreeVector fPos;
     G4ThreeVector fDetPos;
+    G4bool fGood;
 
     bool _isValidHit;
 

@@ -116,12 +116,15 @@ void EventAction::EndOfEventAction(const G4Event* event)
     // fEdep is summed up in src/SteppingAction.cc
     //fEdep += hit->GetEdep();
 
-    fRunAction->RegisterHitInfo(hit->GetDetectorNb(),
-                                hit->GetDetPos().x()/CLHEP::mm,
-                                hit->GetDetPos().y()/CLHEP::mm,
-                                hit->GetDetPos().z()/CLHEP::mm,
-                                hit->GetEdep()/CLHEP::keV
-                               );
+    // store hit if it is in active layers
+    if(hit->IsGoodHit()) {
+        fRunAction->RegisterHitInfo(hit->GetDetectorNb(),
+                                    hit->GetDetPos().x()/CLHEP::mm,
+                                    hit->GetDetPos().y()/CLHEP::mm,
+                                    hit->GetDetPos().z()/CLHEP::mm,
+                                    hit->GetEdep()/CLHEP::keV
+                                   );
+    }
 
   }
 
