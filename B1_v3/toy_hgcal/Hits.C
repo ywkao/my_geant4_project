@@ -40,7 +40,7 @@ void Hits::Loop()
 
         } // end of hit loop
         
-        if(jentry%2==0) print_containers();
+        if(jentry%100==0) print_containers();
 
         // store event information
         for(int i=0; i<26; ++i) {
