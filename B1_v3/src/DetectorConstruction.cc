@@ -213,13 +213,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       // place pcb before / after each of odd layers
       if(i%2==0) {
         name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
-        //position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_pcb - 0.5*pixel_thick);
-        position = G4ThreeVector(0., 0., locations[i] + 0.5*thickness_pcb + 0.5*pixel_thick);
+        position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_pcb - 0.5*pixel_thick);
+        //position = G4ThreeVector(0., 0., locations[i] + 0.5*thickness_pcb + 0.5*pixel_thick);
         new G4PVPlacement(nullptr, position, pcb_LV, name_vol, tracker_LV, i, fCheckOverlaps);
 
         name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
-        //position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*thickness_pcb - 0.5*pixel_thick);
-        position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
+        position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*thickness_pcb - 0.5*pixel_thick);
+        //position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
         new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
 
       } else {
