@@ -253,6 +253,34 @@ void DetectorConstruction::ConstructSDandField()
   G4SDManager::GetSDMpointer()->AddNewDetector(aTrackerSD);
   // Setting aTrackerSD to all logical volumes with the same name
   SetSensitiveDetector("pixel_LV", aTrackerSD, true);
+
+  /***** the following lines are for debug only *****/
+  //SetSensitiveDetector("pcb_LV-layer0", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer1", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer2", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer3", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer4", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer5", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer6", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer7", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer8", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer9", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer10", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer11", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer12", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer13", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer14", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer15", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer16", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer17", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer18", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer19", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer20", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer21", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer22", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer23", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer24", aTrackerSD, true);
+  //SetSensitiveDetector("pcb_LV-layer25", aTrackerSD, true);
   
   // Create global magnetic field messenger.
   // Uniform magnetic field is then created automatically if the field value is not zero.

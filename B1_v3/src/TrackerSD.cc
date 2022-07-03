@@ -101,6 +101,15 @@ G4bool TrackerSD::ProcessHits(G4Step* aStep,
 
   G4LogicalVolume* volume = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
   G4bool is_in_active_volume = volume->GetName() == "pixel_LV";
+
+  bool debug = false;
+  if(debug) {
+    if(is_in_active_volume)
+        G4cout << ">>>>> TrackerSD::volume->GetName = " << volume->GetName() << G4endl;
+    else
+        G4cout << ">>>>> TrackerSD::volume->GetName (else) = " << volume->GetName() << G4endl;
+  }
+
   newHit->SetGoodHit(is_in_active_volume);
   
   fHitsCollection->insert( newHit );
