@@ -201,32 +201,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       //+++++++++++++++++++++++++
       G4double plate_dimension = n_pixels*space_y;
 
-      name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
-      G4Box *pcb_box = new G4Box(name_obj, 0.5*plate_dimension, 0.5*plate_dimension, 0.5*thickness_pcb);
-      G4LogicalVolume *pcb_LV = new G4LogicalVolume(pcb_box, pcb, name_log);
+      //name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
+      //G4Box *pcb_box = new G4Box(name_obj, 0.5*plate_dimension, 0.5*plate_dimension, 0.5*thickness_pcb);
+      //G4LogicalVolume *pcb_LV = new G4LogicalVolume(pcb_box, pcb, name_log);
 
       name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
       G4double thickness_lead = radiation_length_lead * factor_passive_layer[i];
       G4Box *lead_box = new G4Box(name_obj, 0.5*plate_dimension, 0.5*plate_dimension, 0.5*thickness_lead);
       G4LogicalVolume *lead_LV = new G4LogicalVolume(lead_box, lead, name_log);
 
-      // place pcb before / after each of odd layers
-      if(i%2==0) {
-        name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
-        //position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_pcb - 0.5*pixel_thick);
-        position = G4ThreeVector(0., 0., locations[i] + 0.5*thickness_pcb + 0.5*pixel_thick);
-        new G4PVPlacement(nullptr, position, pcb_LV, name_vol, tracker_LV, i, fCheckOverlaps);
-
-        name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
-        //position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*thickness_pcb - 0.5*pixel_thick);
-        position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
-        new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
-
-      } else {
-        name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
-        position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
-        new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
-      }
+      name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
+      position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
+      new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
 
       //++++++++++++++++++++++++++++++
       // place element in detector
@@ -254,34 +240,6 @@ void DetectorConstruction::ConstructSDandField()
   // Setting aTrackerSD to all logical volumes with the same name
   SetSensitiveDetector("pixel_LV", aTrackerSD, true);
 
-  /***** the following lines are for debug only *****/
-  //SetSensitiveDetector("pcb_LV-layer0", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer1", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer2", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer3", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer4", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer5", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer6", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer7", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer8", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer9", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer10", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer11", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer12", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer13", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer14", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer15", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer16", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer17", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer18", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer19", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer20", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer21", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer22", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer23", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer24", aTrackerSD, true);
-  //SetSensitiveDetector("pcb_LV-layer25", aTrackerSD, true);
-  
   // Create global magnetic field messenger.
   // Uniform magnetic field is then created automatically if the field value is not zero.
   G4ThreeVector fieldValue = G4ThreeVector(0, 0, 2*tesla);
