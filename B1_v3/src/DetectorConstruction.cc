@@ -170,9 +170,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       //+++++++++++++++++++++++++
       // 2D array
       //+++++++++++++++++++++++++
-      name_obj = "two_dim_array_box" + tag;
-      name_log = "two_dim_array_LV" + tag;
-      name_vol = "two_dim_array_PV" + tag;
+      name_obj = "arr2D_box" + tag;
+      name_log = "arr2D_LV" + tag;
+      name_vol = "arr2D_PV" + tag;
       G4double two_dim_array_size = occupied_fraction*worldYZSize;
       G4double two_dim_array_thick = pixel_thick;
       G4Box *two_dim_array = new G4Box(name_obj, 0.5*two_dim_array_size, 0.5*two_dim_array_size, 0.5*two_dim_array_thick);
@@ -255,6 +255,62 @@ void DetectorConstruction::ConstructSDandField()
   SetSensitiveDetector("pixel_LV", aTrackerSD, true);
 
   /***** the following lines are for debug only *****/
+  //SetSensitiveDetector("tracker_LV", aTrackerSD, true);
+
+  //SetSensitiveDetector("arr2D_LV-layer0", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer1", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer2", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer3", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer4", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer5", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer6", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer7", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer8", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer9", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer10", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer11", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer12", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer13", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer14", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer15", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer16", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer17", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer18", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer19", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer20", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer21", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer22", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer23", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer24", aTrackerSD, true);
+  //SetSensitiveDetector("arr2D_LV-layer25", aTrackerSD, true);
+
+  //SetSensitiveDetector("lead_LV-layer0", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer1", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer2", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer3", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer4", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer5", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer6", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer7", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer8", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer9", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer10", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer11", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer12", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer13", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer14", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer15", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer16", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer17", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer18", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer19", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer20", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer21", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer22", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer23", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer24", aTrackerSD, true);
+  //SetSensitiveDetector("lead_LV-layer25", aTrackerSD, true);
+
   //SetSensitiveDetector("pcb_LV-layer0", aTrackerSD, true);
   //SetSensitiveDetector("pcb_LV-layer1", aTrackerSD, true);
   //SetSensitiveDetector("pcb_LV-layer2", aTrackerSD, true);
@@ -281,6 +337,7 @@ void DetectorConstruction::ConstructSDandField()
   //SetSensitiveDetector("pcb_LV-layer23", aTrackerSD, true);
   //SetSensitiveDetector("pcb_LV-layer24", aTrackerSD, true);
   //SetSensitiveDetector("pcb_LV-layer25", aTrackerSD, true);
+  //**********************************************************************//
   
   // Create global magnetic field messenger.
   // Uniform magnetic field is then created automatically if the field value is not zero.

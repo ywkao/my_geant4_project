@@ -75,32 +75,27 @@ G4bool TrackerSD::ProcessHits(G4Step* aStep,
 {
   // energy deposit
   G4double edep = aStep->GetTotalEnergyDeposit();
+  G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
+  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
 
   if (edep==0.) return false;
 
   TrackerHit* newHit = new TrackerHit();
 
-  newHit->SetTrackID  (aStep->GetTrack()->GetTrackID());
-  newHit->SetDetectorNb(aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber());
   newHit->SetEdep(edep);
-  newHit->SetPos (aStep->GetPostStepPoint()->GetPosition());
-  // // ... retrieve the 'pre-step' point
-  // //
-  // G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
-  
-  // // ... retrieve a touchable handle and access to the information
-  // //
-  // G4TouchableHandle theTouchable = preStepPoint->GetTouchableHandle();
-  // G4int copyNo = theTouchable->GetCopyNumber();
-  // G4int motherCopyNo = theTouchable->GetCopyNumber(1);
+  newHit->SetTrackID  (aStep->GetTrack()->GetTrackID());
+  newHit->SetDetectorNb(preStepPoint->GetTouchableHandle()->GetCopyNumber());
+  newHit->SetPrePosition (preStepPoint->GetPosition());
+  newHit->SetPostPosition (postStepPoint->GetPosition());
+
   G4ThreeVector origin(0.,0.,0.);
-  G4ThreeVector globalOrigin = aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->
-    GetTopTransform().Inverse().TransformPoint(origin);  
-  
+  G4ThreeVector globalOrigin = preStepPoint->GetTouchableHandle()->GetHistory()->GetTopTransform().Inverse().TransformPoint(origin);  
   newHit->SetDetPos(globalOrigin);
 
-  G4LogicalVolume* volume = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
+  G4LogicalVolume* volume = preStepPoint->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
   G4bool is_in_active_volume = volume->GetName() == "pixel_LV";
+  newHit->SetVolumeName(volume->GetName());
+  newHit->SetGoodHit(is_in_active_volume);
 
   bool debug = false;
   if(debug) {
@@ -110,7 +105,8 @@ G4bool TrackerSD::ProcessHits(G4Step* aStep,
         G4cout << ">>>>> TrackerSD::volume->GetName (else) = " << volume->GetName() << G4endl;
   }
 
-  newHit->SetGoodHit(is_in_active_volume);
+  G4bool is_forward_direction = postStepPoint->GetPosition().getZ() - preStepPoint->GetPosition().getZ() > 0.;
+  newHit->SetHitDirectiton(is_forward_direction);
   
   fHitsCollection->insert( newHit );
 

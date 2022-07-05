@@ -104,34 +104,34 @@
 # To get nice view
 # Make the "World" box invisible
 /vis/geometry/set/visibility World 0 false
-/vis/geometry/set/visibility Ring_LV 0 false
+#/vis/geometry/set/visibility Ring_LV 0 false
 #/vis/geometry/set/visibility two_dim_array_LV 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer0  0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer1  0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer2  0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer3  0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer4  0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer5  0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer6  0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer7  0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer8  0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer9  0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer10 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer11 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer12 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer13 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer14 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer15 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer16 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer17 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer18 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer19 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer20 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer21 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer22 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer23 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer24 0 false
-/vis/geometry/set/visibility two_dim_array_LV-layer25 0 false
+/vis/geometry/set/visibility arr2D_LV-layer0  0 false
+/vis/geometry/set/visibility arr2D_LV-layer1  0 false
+/vis/geometry/set/visibility arr2D_LV-layer2  0 false
+/vis/geometry/set/visibility arr2D_LV-layer3  0 false
+/vis/geometry/set/visibility arr2D_LV-layer4  0 false
+/vis/geometry/set/visibility arr2D_LV-layer5  0 false
+/vis/geometry/set/visibility arr2D_LV-layer6  0 false
+/vis/geometry/set/visibility arr2D_LV-layer7  0 false
+/vis/geometry/set/visibility arr2D_LV-layer8  0 false
+/vis/geometry/set/visibility arr2D_LV-layer9  0 false
+/vis/geometry/set/visibility arr2D_LV-layer10 0 false
+/vis/geometry/set/visibility arr2D_LV-layer11 0 false
+/vis/geometry/set/visibility arr2D_LV-layer12 0 false
+/vis/geometry/set/visibility arr2D_LV-layer13 0 false
+/vis/geometry/set/visibility arr2D_LV-layer14 0 false
+/vis/geometry/set/visibility arr2D_LV-layer15 0 false
+/vis/geometry/set/visibility arr2D_LV-layer16 0 false
+/vis/geometry/set/visibility arr2D_LV-layer17 0 false
+/vis/geometry/set/visibility arr2D_LV-layer18 0 false
+/vis/geometry/set/visibility arr2D_LV-layer19 0 false
+/vis/geometry/set/visibility arr2D_LV-layer20 0 false
+/vis/geometry/set/visibility arr2D_LV-layer21 0 false
+/vis/geometry/set/visibility arr2D_LV-layer22 0 false
+/vis/geometry/set/visibility arr2D_LV-layer23 0 false
+/vis/geometry/set/visibility arr2D_LV-layer24 0 false
+/vis/geometry/set/visibility arr2D_LV-layer25 0 false
 
 # set transparent color to represent materials (red/green/blue)
 /vis/geometry/set/colour tracker_LV 0 0 0 1 .1
@@ -213,7 +213,9 @@
 #/tracker/generator/momentum 1 GeV
 #/tracker/generator/sigmaAngle 0 deg
 
-/gun/particle e- 
-/gun/particle mu- 
+#/gun/particle e- 
+#/gun/particle gamma 
+#/gun/particle mu- 
+/gun/particle proton 
 /gun/energy 100 GeV
 /run/beamOn 1

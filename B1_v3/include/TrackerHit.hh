@@ -66,28 +66,35 @@ class TrackerHit : public G4VHit
     void Print() override;
 
     // Set methods
-    void SetTrackID  (G4int track)       { fTrackID    = track; };
-    void SetDetectorNb(G4int det)        { fDetectorNb = det;   };
-    void SetEdep     (G4double de)       { fEdep       = de;    };
-    void SetPos      (G4ThreeVector xyz) { fPos        = xyz;   };
-    void SetDetPos   (G4ThreeVector xyz) { fDetPos     = xyz;   };
-    void SetGoodHit  (G4bool good)       { fGood       = good;  }; // is in active layer
+    void SetTrackID  (G4int track)            { fTrackID      = track;   };
+    void SetDetectorNb(G4int det)             { fDetectorNb   = det;     };
+    void SetEdep     (G4double de)            { fEdep         = de;      };
+    void SetPostPosition  (G4ThreeVector xyz) { fPostPosition = xyz;     };
+    void SetPrePosition  (G4ThreeVector xyz)  { fPrePosition  = xyz;     };
+    void SetDetPos   (G4ThreeVector xyz)      { fDetPos       = xyz;     };
+    void SetGoodHit  (G4bool good)            { fGood         = good;    }; // is in active layer
+    void SetHitDirectiton (G4bool forward)    { fFoward       = forward; }; // propagated forward
+    void SetVolumeName (G4String name)    { fVolumeName       = name; };
 
     // Get methods
     G4int GetTrackID() const        { return fTrackID;    };
     G4int GetDetectorNb() const     { return fDetectorNb; };
     G4double GetEdep() const        { return fEdep;       };
-    G4ThreeVector GetPos() const    { return fPos;        };
+    //G4ThreeVector GetPos() const    { return fPostPosition; };
     G4ThreeVector GetDetPos() const { return fDetPos;     };
     G4bool IsGoodHit() const        { return fGood;       }; // is in active layer
+    G4bool IsFowardHit() const      { return fFoward;     }; // propagated forward
 
   private:
     G4int         fTrackID = -1;
     G4int         fDetectorNb = -1;
     G4double      fEdep = 0.;
-    G4ThreeVector fPos;
+    G4ThreeVector fPostPosition;
+    G4ThreeVector fPrePosition;
     G4ThreeVector fDetPos;
-    G4bool fGood;
+    G4String      fVolumeName;
+    G4bool        fGood;
+    G4bool        fFoward;
 
     bool _isValidHit;
 

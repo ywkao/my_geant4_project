@@ -64,7 +64,7 @@ void TrackerHit::Draw()
   G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();
   if(pVVisManager)
   {
-    G4Circle circle(fPos);
+    G4Circle circle(fPostPosition);
     circle.SetScreenSize(4.);
     circle.SetFillStyle(G4Circle::filled);
     G4Colour colour(1.,0.,0.);
@@ -82,17 +82,23 @@ void TrackerHit::Print()
   if(debug) {
   G4cout
      << std::fixed << std::setprecision(3)
-     << " trackID: "     << std::setw(3) << fTrackID
-     << " detetorNb: "   << fDetectorNb
-     << " Edep: "        << std::setw(8) << fEdep/CLHEP::keV << "   " //G4BestUnit(fEdep,"Energy")
-     << " Position: ("
-     << std::setw(8) << fPos.getX()/CLHEP::mm << ", "
-     << std::setw(8) << fPos.getY()/CLHEP::mm << ", "
-     << std::setw(8) << fPos.getZ()/CLHEP::mm << ")   "
+     << " trackID: "   << std::setw(3) << fTrackID
+     //<< " detetorNb: "   << fDetectorNb
+     << " volume: "    << std::left << std::setw(16) << fVolumeName
+     << " Edep: "      << std::right << std::setw(8) << fEdep/CLHEP::keV << "  " //G4BestUnit(fEdep,"Energy")
+     << " IsForward: " << fFoward << ", "
+     << " Pre-position: ("
+     << std::setw(8) << fPrePosition.getX()/CLHEP::mm << ", "
+     << std::setw(8) << fPrePosition.getY()/CLHEP::mm << ", "
+     << std::setw(8) << fPrePosition.getZ()/CLHEP::mm << "), "
+     << " Post-position: ("
+     << std::setw(8) << fPostPosition.getX()/CLHEP::mm << ", "
+     << std::setw(8) << fPostPosition.getY()/CLHEP::mm << ", "
+     << std::setw(8) << fPostPosition.getZ()/CLHEP::mm << "), "
      << " DetPosition: ("
      << std::setw(8) << fDetPos.getX()/CLHEP::mm << ", " 
      << std::setw(8) << fDetPos.getY()/CLHEP::mm << ", "
-     << std::setw(8) << fDetPos.getZ()/CLHEP::mm << ")   "
+     << std::setw(8) << fDetPos.getZ()/CLHEP::mm << ")"
      //<< " Position: "    << fPos/CLHEP::mm << "   " //G4BestUnit( fPos,"Length")
      //<< " DetPosition: " << fDetPos/CLHEP::mm //G4BestUnit( fDetPos,"Length")
      << G4endl;
