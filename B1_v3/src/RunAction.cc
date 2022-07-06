@@ -100,6 +100,7 @@ RunAction::RunAction()
   analysisManager->CreateNtupleDColumn("Hits_DetZ_mm", fSiHitsZ);  // column Id = 8
   analysisManager->CreateNtupleDColumn("Hits_DetE_keV", fSiHitsEdep);  // column Id = 9
   analysisManager->CreateNtupleIColumn("Hits_DetID", fDetID);  // column Id = 10
+  analysisManager->CreateNtupleIColumn("Hits_isForward", fIsForward);  // column Id = 11
   
   analysisManager->FinishNtuple(ntupleID);
   
@@ -234,15 +235,16 @@ void RunAction::ResetHitInfoContainer()
     fSiHitsZ.clear();
     fSiHitsEdep.clear();
     fDetID.clear();
+    fIsForward.clear();
 }
 
-void RunAction::RegisterHitInfo(G4int detID, G4double x, G4double y, G4double z, G4double e)
+void RunAction::RegisterHitInfo(G4int detID, G4bool isForward, G4double x, G4double y, G4double z, G4double e)
 {
     fSiHitsX.push_back(x);    
     fSiHitsY.push_back(y);
     fSiHitsZ.push_back(z);
     fSiHitsEdep.push_back(e);
-    fDetID.push_back(detID);
+    fIsForward.push_back(isForward);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

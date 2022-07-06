@@ -118,7 +118,9 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
     // store hit if it is in active layers
     if(hit->IsGoodHit()) {
-        fRunAction->RegisterHitInfo(hit->GetDetectorNb(),
+        fRunAction->RegisterHitInfo(
+                                    hit->GetDetectorNb(),
+                                    hit->IsFowardHit(),
                                     hit->GetDetPos().x()/CLHEP::mm,
                                     hit->GetDetPos().y()/CLHEP::mm,
                                     hit->GetDetPos().z()/CLHEP::mm,

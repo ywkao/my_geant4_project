@@ -60,7 +60,7 @@ class RunAction : public G4UserRunAction
     void AddEdep (G4double edep);
 
     void ResetHitInfoContainer();
-    void RegisterHitInfo(G4int detID, G4double x, G4double y, G4double z, G4double e);
+    void RegisterHitInfo(G4int detID, G4bool isForward, G4double x, G4double y, G4double z, G4double e);
 
 
   private:
@@ -77,6 +77,7 @@ class RunAction : public G4UserRunAction
     std::vector<G4double> fSiHitsEdep;
     //vector of silicon sensor ID
     std::vector<G4int> fDetID;
+    std::vector<G4int> fIsForward;
 
 };
 
