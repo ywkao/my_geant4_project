@@ -36,6 +36,7 @@
 class G4VPhysicalVolume;
 class G4LogicalVolume;
 class G4GlobalMagFieldMessenger;
+class G4Material;
 
 /// Detector construction class to define materials and geometry.
 
@@ -45,7 +46,7 @@ namespace B1
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
   public:
-    DetectorConstruction();
+    DetectorConstruction(int type);
     ~DetectorConstruction() override;
 
     G4VPhysicalVolume* Construct() override;
@@ -58,9 +59,46 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* fScoringVolume = nullptr;
 
   private:
-    //static G4ThreadLocal G4GlobalMagFieldMessenger* fMagFieldMessenger;
-    //static G4GlobalMagFieldMessenger* fMagFieldMessenger;
+    void DefineMaterials();
+    void DefineDimensions();
+    G4VPhysicalVolume* DefineVolumes();
+
+    //----------------------------------------------------------------------------------------------------
+
+    int fType;
+
     G4GlobalMagFieldMessenger* fMagFieldMessenger;
+    G4Material* fEnvMaterial = nullptr;
+    G4Material* fTargetMaterial = nullptr;
+    G4Material* fPassiveMaterial = nullptr;
+
+    G4Material* pcb = nullptr;
+    G4bool fCheckOverlaps;
+
+    //----------------------------------------------------------------------------------------------------
+
+    G4int n_pixels;
+    G4double pixel_unit;
+    G4double default_pixel_length; // y direction
+    G4double default_pixel_width; // x direction
+    G4double default_pixel_thick; // z direction
+
+    G4double thickness_pcb;
+    G4double radiation_length_lead;
+
+    G4double worldXSize;
+    G4double worldYZSize;
+    G4double occupied_fraction;
+
+    G4double detXSize;
+    G4double detYZSize;
+
+    G4double two_dim_array_size;
+    G4double two_dim_array_thick;
+
+    std::vector<G4double> locations;
+    std::vector<G4double> factor_passive_layer;
+
 };
 
 }

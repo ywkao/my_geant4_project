@@ -27,6 +27,8 @@
 /// \file exampleB1.cc
 /// \brief Main program of the B1 example
 
+#include <stdlib.h>
+
 #include "DetectorConstruction.hh"
 #include "ActionInitialization.hh"
 
@@ -49,7 +51,8 @@ int main(int argc,char** argv)
   // Detect interactive mode (if no arguments) and define UI session
   //
   G4UIExecutive* ui = nullptr;
-  if ( argc == 1 ) { ui = new G4UIExecutive(argc, argv); }
+  //if ( argc == 1 ) { ui = new G4UIExecutive(argc, argv); }
+  if ( argc == 2 ) { ui = new G4UIExecutive(argc, argv); }
 
   // Optionally: choose a different Random engine...
   // G4Random::setTheEngine(new CLHEP::MTwistEngine);
@@ -66,7 +69,26 @@ int main(int argc,char** argv)
   // Set mandatory initialization classes
   //
   // Detector construction
-  runManager->SetUserInitialization(new DetectorConstruction());
+  int geometry_type;
+
+  printf(">>>>> check argc = %d\n", argc);
+
+  if(argc==1){
+      geometry_type = 0;
+  } else {
+      char *p;
+      long conv = strtol(argv[1], &p, 10);
+      if(*p!='\0' || conv > INT_MAX || conv < INT_MIN) {
+          printf(">>> please specify a proper integer for geometry_type (0/1/2)\n");
+          return 2;
+      } else {
+          int num = conv;
+          geometry_type = num;
+          printf(">>> geometry_type = %d\n", geometry_type);
+      }
+  }
+
+  runManager->SetUserInitialization(new DetectorConstruction(geometry_type));
 
   // Physics list
   G4VModularPhysicsList* physicsList = new QBBC;
@@ -91,7 +113,8 @@ int main(int argc,char** argv)
   if ( ! ui ) {
     // batch mode
     G4String command = "/control/execute ";
-    G4String fileName = argv[1];
+    //G4String fileName = argv[1];
+    G4String fileName = argv[2];
     UImanager->ApplyCommand(command+fileName);
   }
   else {

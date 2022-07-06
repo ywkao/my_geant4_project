@@ -56,7 +56,8 @@ namespace B1
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-DetectorConstruction::DetectorConstruction()
+DetectorConstruction::DetectorConstruction(int type)
+: fType(type)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -68,13 +69,21 @@ DetectorConstruction::~DetectorConstruction()
 
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
+    DefineMaterials();
+    DefineDimensions();
+
+    return DefineVolumes();
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void DetectorConstruction::DefineMaterials()
+{
   // Get nist material manager
   G4NistManager* nist = G4NistManager::Instance();
-  G4Material* air      = nist -> FindOrBuildMaterial("G4_AIR");
-  G4Material* galactic = nist -> FindOrBuildMaterial("G4_Galactic");
-  G4Material* silicon  = nist -> FindOrBuildMaterial("G4_Si");
-  G4Material* lead     = nist -> FindOrBuildMaterial("G4_Pb");
-  G4Material* envMaterial = galactic;
+  fEnvMaterial     = nist -> FindOrBuildMaterial("G4_Galactic");
+  fTargetMaterial  = nist -> FindOrBuildMaterial("G4_Si");
+  fPassiveMaterial = nist -> FindOrBuildMaterial("G4_Pb");
 
   G4bool isotopes = false;
   G4Element* Si = nist->FindOrBuildElement("Si", isotopes);
@@ -83,60 +92,77 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Element* H  = nist->FindOrBuildElement("H" , isotopes);
   G4Element* Br = nist->FindOrBuildElement("Br", isotopes);
 
-  G4Material* pcb = new G4Material("pcb", 1.70*g/cm3, 5);
+  pcb = new G4Material("PCB", 1.70*g/cm3, 5);
   pcb->AddElement(Si , 0.18077359);
   pcb->AddElement(O  , 0.4056325);
   pcb->AddElement(C  , 0.27804208);
   pcb->AddElement(H  , 0.068442752);
   pcb->AddElement(Br , 0.067109079);
 
-  // length
-  G4double radiation_length_lead = 5.612*mm;
-  G4double thickness_pcb = 1.60*mm;
+  nist -> FindOrBuildMaterial("PCB");
+  nist -> FindOrBuildMaterial("G4_AIR");
 
-  // Option to switch on/off checking of volumes overlaps
-  G4bool fCheckOverlaps = true;
+  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+}
+
+void DetectorConstruction::DefineDimensions()
+{
+
+  fCheckOverlaps = true;
+
+  // dimensions
+  n_pixels = 20; // quick test
+  pixel_unit = 100*micrometer; // quick test
+  default_pixel_length = 100*pixel_unit; // y direction
+  default_pixel_width  = 100*pixel_unit; // x direction
+  default_pixel_thick  = 300*micrometer; // z direction
+
+  thickness_pcb = 1.60*mm;
+  radiation_length_lead = 5.612*mm;
+
+  worldXSize  = 500*cm;
+  worldYZSize = 1.25*worldXSize;
+  occupied_fraction = 0.96;
+
+  detXSize  = occupied_fraction*worldXSize;
+  detYZSize = occupied_fraction*worldYZSize;
+
+  two_dim_array_size = detYZSize;
+  two_dim_array_thick = default_pixel_thick;
+
+  //----------------------------------------------------------------------------------------------------
+
+  locations = {  50*mm,  75*mm, 100*mm, 125*mm, 150*mm, 175*mm, 200*mm, 225*mm, 250*mm, 275*mm,
+                 300*mm, 325*mm, 350*mm, 375*mm, 400*mm, 425*mm, 450*mm, 475*mm, 500*mm, 525*mm,
+                 550*mm, 575*mm, 600*mm, 625*mm, 650*mm, 675*mm
+               };
+
+  factor_passive_layer = {  0.564, 1.003, 0.98, 1.002, 0.979, 1.003, 0.978, 1.003, 0.978, 1.003,
+                            0.979, 1.002, 0.979, 1.002, 0.979, 1.003, 0.978, 1.003, 1.557, 1.003,
+                            1.558, 1.002, 1.558, 1.003, 1.557, 1.003
+                         };
+
+  factor_passive_layer = {1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.}; // equal width for each layer
+
+  //----------------------------------------------------------------------------------------------------
+}
+
+G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
+{
+
+  // world
+  G4Box* worldSolid = new G4Box("World", 0.5*worldXSize, 0.5*worldYZSize, 0.5*worldYZSize);
+  G4LogicalVolume* worldLV = new G4LogicalVolume(worldSolid, fEnvMaterial, "World");
+  G4VPhysicalVolume* worldPV = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), worldLV, "World", nullptr, 0, fCheckOverlaps);
+
+  // detector
+  G4Box *tracker = new G4Box("tracker", 0.5*detXSize, 0.5*detYZSize, 0.5*detYZSize);
+  G4LogicalVolume *tracker_LV = new G4LogicalVolume(tracker, fEnvMaterial, "tracker_LV");
+  new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), tracker_LV, "tracker_PV", worldLV, 999, fCheckOverlaps);
 
   //==================================================
   // start of my detector
   //==================================================
-  G4double worldXSize  = 500*cm;
-  G4double worldYZSize = 1.25*worldXSize;
-  G4double occupied_fraction = 0.96;
-
-  G4double yt = mm; // unit in y coordinate, cm
-  std::vector<G4double> locations = {  50*yt,  75*yt, 100*yt, 125*yt, 150*yt, 175*yt, 200*yt, 225*yt, 250*yt, 275*yt,
-                                      300*yt, 325*yt, 350*yt, 375*yt, 400*yt, 425*yt, 450*yt, 475*yt, 500*yt, 525*yt,
-                                      550*yt, 575*yt, 600*yt, 625*yt, 650*yt, 675*yt
-                                    };
-
-  std::vector<G4double> factor_passive_layer = {
-                                      0.564, 1.003, 0.98, 1.002, 0.979, 1.003, 0.978, 1.003, 0.978, 1.003,
-                                      0.979, 1.002, 0.979, 1.002, 0.979, 1.003, 0.978, 1.003, 1.557, 1.003,
-                                      1.558, 1.002, 1.558, 1.003, 1.557, 1.003
-                                    };
-
-  factor_passive_layer = {1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.}; // equal width for each layer
-
-  G4int n_pixels = 20; // quick test
-  G4double pixel_unit = 100*micrometer; // quick test
-  G4double default_pixel_length = 100*pixel_unit; // y direction
-  G4double default_pixel_width  = 100*pixel_unit; // x direction
-  G4double default_pixel_thick  = 300*micrometer; // z direction
-
-  // world
-  G4Box* worldSolid = new G4Box("World", 0.5*worldXSize, 0.5*worldYZSize, 0.5*worldYZSize);
-  G4LogicalVolume* worldLV = new G4LogicalVolume(worldSolid, envMaterial, "World");
-  G4VPhysicalVolume* worldPV = new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), worldLV, "World", nullptr, 0, fCheckOverlaps);
-
-  // detector
-  G4double detXSize  = occupied_fraction*worldXSize;
-  G4double detYZSize = occupied_fraction*worldYZSize;
-  G4Box *tracker = new G4Box("tracker", 0.5*detXSize, 0.5*detYZSize, 0.5*detYZSize);
-  G4LogicalVolume *tracker_LV = new G4LogicalVolume(tracker, envMaterial, "tracker_LV");
-  new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), tracker_LV, "tracker_PV", worldLV, 999, fCheckOverlaps);
-
-  //----------------------------------------------------------------------------------------------------
 
   G4LogicalVolume *pixel_logic[26];
 
@@ -147,36 +173,29 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       G4String name_obj;
       G4String name_log;
       G4String name_vol;
-      G4String layer_name = "layer";
-      //G4String layer_name = "layer" + idx;
 
       // insure all hits can be detected
       G4double scale = locations[i] / locations[0];
-      G4cout << ">>> mycheck: " << i << ", scale = " << scale << ", layer_name = " << layer_name << G4endl;
+      G4cout << ">>> mycheck: " << i << ", scale = " << scale << G4endl;
       G4double pixel_length = scale*default_pixel_length; // z direction
       G4double pixel_width  = scale*default_pixel_width ; // x direction
-      G4double pixel_thick  = default_pixel_thick ; // y direction
+      G4double pixel_thick  = default_pixel_thick; // y direction
       G4double space_y = 1.01*pixel_length;
       G4double space_x = 1.01*pixel_width;
 
       //+++++++++++++++++++++++++
       // pixel
       //+++++++++++++++++++++++++
-      name_obj = "pixel_box";
-      name_log = "pixel_LV";
+      name_obj = "pixel_box"; name_log = "pixel_LV";
       G4Box *pixel = new G4Box(name_obj, 0.5*pixel_width, 0.5*pixel_length, 0.5*pixel_thick);
-      pixel_logic[i] = new G4LogicalVolume(pixel, silicon, name_log);
+      pixel_logic[i] = new G4LogicalVolume(pixel, fTargetMaterial, name_log);
 
       //+++++++++++++++++++++++++
       // 2D array
       //+++++++++++++++++++++++++
-      name_obj = "arr2D_box" + tag;
-      name_log = "arr2D_LV" + tag;
-      name_vol = "arr2D_PV" + tag;
-      G4double two_dim_array_size = occupied_fraction*worldYZSize;
-      G4double two_dim_array_thick = pixel_thick;
+      name_obj = "arr2D_box" + tag; name_log = "arr2D_LV" + tag; name_vol = "arr2D_PV" + tag;
       G4Box *two_dim_array = new G4Box(name_obj, 0.5*two_dim_array_size, 0.5*two_dim_array_size, 0.5*two_dim_array_thick);
-      G4LogicalVolume *two_dim_array_logic = new G4LogicalVolume(two_dim_array, envMaterial, name_log);
+      G4LogicalVolume *two_dim_array_logic = new G4LogicalVolume(two_dim_array, fEnvMaterial, name_log);
       //new G4PVReplica(name_vol, one_dim_array_logic, two_dim_array_logic, kXAxis, n_pixels, space_x);
       G4int copyNo = 0;
       G4double firstYPosition = -0.5*n_pixels*space_y + 0.5*space_y; // center of left-most pixel
@@ -208,19 +227,36 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
       G4double thickness_lead = radiation_length_lead * factor_passive_layer[i];
       G4Box *lead_box = new G4Box(name_obj, 0.5*plate_dimension, 0.5*plate_dimension, 0.5*thickness_lead);
-      G4LogicalVolume *lead_LV = new G4LogicalVolume(lead_box, lead, name_log);
+      G4LogicalVolume *lead_LV = new G4LogicalVolume(lead_box, fPassiveMaterial, name_log);
 
       // place pcb before / after each of odd layers
       if(i%2==0) {
-        name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
-        //position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_pcb - 0.5*pixel_thick);
-        position = G4ThreeVector(0., 0., locations[i] + 0.5*thickness_pcb + 0.5*pixel_thick);
-        new G4PVPlacement(nullptr, position, pcb_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+        // pcb after
+        if(fType==0){
+            name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
+            position = G4ThreeVector(0., 0., locations[i] + 0.5*thickness_pcb + 0.5*pixel_thick);
+            new G4PVPlacement(nullptr, position, pcb_LV, name_vol, tracker_LV, i, fCheckOverlaps);
 
-        name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
-        //position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*thickness_pcb - 0.5*pixel_thick);
-        position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
-        new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+            name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
+            position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
+            new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+
+        // pcb before
+        } else if(fType==1) {
+            name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
+            position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_pcb - 0.5*pixel_thick);
+            new G4PVPlacement(nullptr, position, pcb_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+
+            name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
+            position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*thickness_pcb - 0.5*pixel_thick);
+            new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+
+        // no pcb
+        } else {
+            name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
+            position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
+            new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+        }
 
       } else {
         name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
@@ -231,10 +267,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       //++++++++++++++++++++++++++++++
       // place element in detector
       //++++++++++++++++++++++++++++++
-      new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,locations[i]), two_dim_array_logic, layer_name, tracker_LV, i, fCheckOverlaps);
+      new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,locations[i]), two_dim_array_logic, "layer", tracker_LV, i, fCheckOverlaps);
   }
 
-  //fScoringVolume = tracker_LV;
   fScoringVolume = pixel_logic[0];
 
   //----------------------------------------------------------------------------------------------------
