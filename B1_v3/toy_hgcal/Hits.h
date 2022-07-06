@@ -74,11 +74,14 @@ class Hits {
         TH1D *h_Hits_DetX_mm;
         TH1D *h_Hits_DetY_mm;
         TH1D *h_Hits_DetZ_mm;
-        TH1D *h_Hits_DetE_keV;
+        TH1D *h_Hits_DetE_MeV;
         TH1D *h_nHits;
+        TH1D *h_Edep_odd;
+        TH1D *h_Edep_even;
 
         vector<int> vc_nHits;
         vector<double> vc_Edep; // MeV
+        vector<double> vc_Edep_odd_even; // MeV
 
         vector<TH1D*> vh_nHits;
         vector<TH1D*> vh_Edep;
@@ -168,8 +171,16 @@ void Hits::Init(TTree *tree, TString input)
     h_Hits_DetX_mm  = new TH1D("h_Hits_DetX_mm" , "", 50, 0, 100);
     h_Hits_DetY_mm  = new TH1D("h_Hits_DetY_mm" , "", 50, 0, 100);
     h_Hits_DetZ_mm  = new TH1D("h_Hits_DetZ_mm" , "", 100, 0, 1000);
-    h_Hits_DetE_keV = new TH1D("h_Hits_DetE_keV", "", 50, 0, 1000);
+    h_Hits_DetE_MeV = new TH1D("h_Hits_DetE_MeV", "", 50, 0, 1);
     h_nHits         = new TH1D("h_nHits", "", 100, 16000, 32000);
+
+    // for evaluating sigma_E/E
+    h_Edep_odd      = new TH1D("h_Edep_odd" , "", 50, 400, 900);
+    h_Edep_even     = new TH1D("h_Edep_even", "", 50, 400, 900);
+
+    // two elements
+    vc_Edep_odd_even.push_back(0.);
+    vc_Edep_odd_even.push_back(0.);
 
     // prepare containers for 26 layers
     TString name;
@@ -178,11 +189,11 @@ void Hits::Init(TTree *tree, TString input)
         vc_Edep.push_back(0.);
 
         name = Form("h_nHits_%d", i+1);
-        TH1D* h_nHits = new TH1D(name, "", 50, 0, 5000);
-        vh_nHits.push_back(h_nHits);
+        TH1D* h_nhits = new TH1D(name, "", 50, 0, 3500);
+        vh_nHits.push_back(h_nhits);
 
         name = Form("h_Edep_%d", i+1);
-        TH1D* h_Edep = new TH1D(name, "", 50, 0, 1000);
+        TH1D* h_Edep = new TH1D(name, "", 50, 0, 500);
         vh_Edep.push_back(h_Edep);
     }
 
@@ -220,7 +231,7 @@ void Hits::FillHists(double x, double y, double z, double e)
     h_Hits_DetX_mm  ->Fill(x);
     h_Hits_DetY_mm  ->Fill(y);
     h_Hits_DetZ_mm  ->Fill(z);
-    h_Hits_DetE_keV ->Fill(e);
+    h_Hits_DetE_MeV ->Fill(e);
 }
 
 void Hits::MakePlots(TString dir)
@@ -228,8 +239,10 @@ void Hits::MakePlots(TString dir)
     h_Hits_DetX_mm  ->Draw(); c1->SaveAs(dir + "/h_Hits_DetX_mm.pdf");
     h_Hits_DetY_mm  ->Draw(); c1->SaveAs(dir + "/h_Hits_DetY_mm.pdf");
     h_Hits_DetZ_mm  ->Draw(); c1->SaveAs(dir + "/h_Hits_DetZ_mm.pdf");
-    h_Hits_DetE_keV ->Draw(); c1->SaveAs(dir + "/h_Hits_DetE_keV.pdf");
+    h_Hits_DetE_MeV ->Draw(); c1->SaveAs(dir + "/h_Hits_DetE_MeV.pdf");
     h_nHits ->Draw(); c1->SaveAs(dir + "/h_nHits.pdf");
+    h_Edep_odd->Draw(); c1->SaveAs(dir + "/h_Edep_odd.pdf");
+    h_Edep_even->Draw(); c1->SaveAs(dir + "/h_Edep_even.pdf");
 }
 
 void Hits::Register()
@@ -240,8 +253,10 @@ void Hits::Register()
     h_Hits_DetX_mm->Write();
     h_Hits_DetY_mm->Write();
     h_Hits_DetZ_mm->Write();
-    h_Hits_DetE_keV->Write();
+    h_Hits_DetE_MeV->Write();
     h_nHits->Write();
+    h_Edep_odd->Write();
+    h_Edep_even->Write();
     
     for(int i=0; i<26; ++i) vh_nHits[i]->Write();
     for(int i=0; i<26; ++i) vh_Edep[i]->Write();
@@ -261,6 +276,9 @@ void Hits::reset_containers()
         vc_nHits[i] = 0;
         vc_Edep[i] = 0.;
     }
+
+    vc_Edep_odd_even[0] = 0.;
+    vc_Edep_odd_even[1] = 0.;
 }
 
 void Hits::print_containers()

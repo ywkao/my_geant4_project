@@ -25,28 +25,37 @@ void Hits::Loop()
             double x = Hits_DetX_mm  -> at(ihit);
             double y = Hits_DetY_mm  -> at(ihit);
             double z = Hits_DetZ_mm  -> at(ihit);
-            double e = Hits_DetE_keV -> at(ihit);
+            double e = Hits_DetE_keV -> at(ihit) / 1000.; // MeV
 
             h_Hits_DetX_mm  -> Fill( x );
             h_Hits_DetY_mm  -> Fill( y );
             h_Hits_DetZ_mm  -> Fill( z );
-            h_Hits_DetE_keV -> Fill( e );
+            h_Hits_DetE_MeV -> Fill( e );
 
             // derived info
             int layer = get_layer(Hits_DetZ_mm->at(ihit));
             int idx = layer - 1;
             vc_nHits[idx] += 1;
-            vc_Edep[idx] += e / 1000.; // MeV
+            vc_Edep[idx] += e;
+
+            if(idx%2==0)
+                vc_Edep_odd_even[0] += e;
+            else
+                vc_Edep_odd_even[1] += e;
 
         } // end of hit loop
         
-        if(jentry%100==0) print_containers();
+        //if(jentry%100==0) print_containers();
 
         // store event information
+        h_Edep_odd ->Fill(vc_Edep_odd_even[0]);
+        h_Edep_even->Fill(vc_Edep_odd_even[1]);
+
         for(int i=0; i<26; ++i) {
             vh_nHits[i]->Fill(vc_nHits[i]);
             vh_Edep[i]->Fill(vc_Edep[i]);
         }
+
     } // end of event loop
 
 }

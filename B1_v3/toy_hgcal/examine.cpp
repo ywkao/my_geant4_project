@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     Hits mytree(tree, input);
 
     mytree.Loop();
-    mytree.MakePlots(output);
+    //mytree.MakePlots(output);
     mytree.Register();
 
     return 0;
