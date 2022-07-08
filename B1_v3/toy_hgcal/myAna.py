@@ -242,9 +242,9 @@ def make_simple_plot():
             sigmaEoverE.append( v_hists[1].GetStdDev() / v_hists[1].GetMean() )
 
             latex.SetTextColor(ROOT.kBlue)
-            latex.DrawLatex( 0.60, 0.70, "#sigma#left(E_{odd}#right) / #bar{E}_{odd} = %.3f" % sigmaEoverE[0] )
+            latex.DrawLatex( 0.60, 0.70, "#sigma#left(E_{odd}#right) / #bar{E}_{odd} = %.4f" % sigmaEoverE[0] )
             latex.SetTextColor(ROOT.kRed)
-            latex.DrawLatex( 0.60, 0.60, "#sigma#left(E_{even}#right) / #bar{E}_{even} = %.3f" % sigmaEoverE[1] )
+            latex.DrawLatex( 0.60, 0.60, "#sigma#left(E_{even}#right) / #bar{E}_{even} = %.4f" % sigmaEoverE[1] )
 
         annotate()
         output = specified_directory + "/" + "h_Edep_odd_even_" + tags[i] + ".pdf"
