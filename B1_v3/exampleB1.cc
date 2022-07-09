@@ -48,10 +48,11 @@ using namespace B1;
 
 int main(int argc,char** argv)
 {
+  //----------------------------------------------------------------------------------------------------
   // Detect interactive mode (if no arguments) and define UI session
-  //
+  //----------------------------------------------------------------------------------------------------
   G4UIExecutive* ui = nullptr;
-  //if ( argc == 1 ) { ui = new G4UIExecutive(argc, argv); }
+  if ( argc == 1 ) { ui = new G4UIExecutive(argc, argv); }
   if ( argc == 2 ) { ui = new G4UIExecutive(argc, argv); }
 
   // Optionally: choose a different Random engine...
@@ -62,44 +63,46 @@ int main(int argc,char** argv)
   G4SteppingVerbose::UseBestUnit(precision);
 
   // Construct the default run manager
-  //
-  auto* runManager =
-    G4RunManagerFactory::CreateRunManager(G4RunManagerType::Default);
+  auto* runManager = G4RunManagerFactory::CreateRunManager(G4RunManagerType::Default);
 
   // Set mandatory initialization classes
-  //
+
+  //----------------------------------------------------------------------------------------------------
   // Detector construction
-  int geometry_type;
+  //----------------------------------------------------------------------------------------------------
+  int geometry_type = 0;
 
-  printf(">>>>> check argc = %d\n", argc);
-
-  if(argc==1){
-      geometry_type = 0;
-  } else {
+  if(argc > 1){
       char *p;
       long conv = strtol(argv[1], &p, 10);
       if(*p!='\0' || conv > INT_MAX || conv < INT_MIN) {
-          printf(">>> please specify a proper integer for geometry_type (0/1/2)\n");
+          printf(">>> please specify a proper integer for geometry_type {0..5}\n");
           return 2;
       } else {
           int num = conv;
           geometry_type = num;
-          printf(">>> geometry_type = %d\n", geometry_type);
       }
   }
 
+  printf(">>>>> argc = %d, geometry_type = %d\n", argc, geometry_type);
+
   runManager->SetUserInitialization(new DetectorConstruction(geometry_type));
 
+  //----------------------------------------------------------------------------------------------------
   // Physics list
+  //----------------------------------------------------------------------------------------------------
   G4VModularPhysicsList* physicsList = new QBBC;
   physicsList->SetVerboseLevel(1);
   runManager->SetUserInitialization(physicsList);
 
+  //----------------------------------------------------------------------------------------------------
   // User action initialization
+  //----------------------------------------------------------------------------------------------------
   runManager->SetUserInitialization(new ActionInitialization());
 
+  //----------------------------------------------------------------------------------------------------
   // Initialize visualization
-  //
+  //----------------------------------------------------------------------------------------------------
   G4VisManager* visManager = new G4VisExecutive;
   // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
   // G4VisManager* visManager = new G4VisExecutive("Quiet");
@@ -124,7 +127,9 @@ int main(int argc,char** argv)
     delete ui;
   }
 
+  //----------------------------------------------------------------------------------------------------
   // Job termination
+  //----------------------------------------------------------------------------------------------------
   // Free the store: user actions, physics_list and detector_description are
   // owned and deleted by the run manager, so they should not be deleted
   // in the main() program !

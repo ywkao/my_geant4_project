@@ -51,6 +51,8 @@
 #include "G4SDManager.hh"
 #include "G4PVReplica.hh"
 
+#include <stdlib.h>
+
 namespace B1
 {
 
@@ -58,7 +60,15 @@ namespace B1
 
 DetectorConstruction::DetectorConstruction(int type)
 : fType(type)
-{}
+{
+    // note for fType
+    // 0: nominal
+    // 1: alternative
+    // 2: pcb before
+    // 3: pcb after
+    // 4: pcb (lead) before
+    // 5: pcb (lead) after
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -98,6 +108,11 @@ void DetectorConstruction::DefineMaterials()
   pcb->AddElement(C  , 0.27804208);
   pcb->AddElement(H  , 0.068442752);
   pcb->AddElement(Br , 0.067109079);
+
+  if(fType==4 || fType==5) {
+    pcb = nist -> FindOrBuildMaterial("G4_Pb");
+    printf(">>>>> [Note] pcb is replaced by lead\n");
+  }
 
   nist -> FindOrBuildMaterial("PCB");
   nist -> FindOrBuildMaterial("G4_AIR");
@@ -142,7 +157,10 @@ void DetectorConstruction::DefineDimensions()
                             1.558, 1.002, 1.558, 1.003, 1.557, 1.003
                          };
 
-  factor_passive_layer = {1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.}; // equal width for each layer
+  if(fType!=1)
+  {
+    factor_passive_layer = {1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.}; // equal width for each layer
+  }
 
   //----------------------------------------------------------------------------------------------------
 }
@@ -231,8 +249,24 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
 
       // place pcb before / after each of odd layers
       if(i%2==0) {
+        // no pcb
+        if(fType==0 || fType==1) {
+            name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
+            position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
+            new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+
+        // pcb before
+        } else if(fType==2 || fType==4) {
+            name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
+            position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_pcb - 0.5*pixel_thick);
+            new G4PVPlacement(nullptr, position, pcb_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+
+            name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
+            position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 1.0*thickness_pcb - 0.5*pixel_thick);
+            new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+
         // pcb after
-        if(fType==0){
+        } else if(fType==3 || fType==5){
             name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
             position = G4ThreeVector(0., 0., locations[i] + 0.5*thickness_pcb + 0.5*pixel_thick);
             new G4PVPlacement(nullptr, position, pcb_LV, name_vol, tracker_LV, i, fCheckOverlaps);
@@ -241,21 +275,16 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
             position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
             new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
 
-        // pcb before
-        } else if(fType==1) {
-            name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
-            position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_pcb - 0.5*pixel_thick);
-            new G4PVPlacement(nullptr, position, pcb_LV, name_vol, tracker_LV, i, fCheckOverlaps);
-
-            name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
-            position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*thickness_pcb - 0.5*pixel_thick);
-            new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
-
-        // no pcb
+        // others
         } else {
-            name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
-            position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
-            new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+            printf("[ERROR] fType is not an expected value\n");
+            printf("0: nominal           \n");
+            printf("1: alternative       \n");
+            printf("2: pcb before        \n");
+            printf("3: pcb after         \n");
+            printf("4: pcb (lead) before \n");
+            printf("5: pcb (lead) after  \n");
+            exit(2);
         }
 
       } else {

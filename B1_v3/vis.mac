@@ -191,7 +191,8 @@
 
 /vis/viewer/set/style surface
 /vis/viewer/set/hiddenMarker true
-/vis/viewer/set/viewpointThetaPhi 120 150
+#/vis/viewer/set/viewpointThetaPhi 120 150
+/vis/viewer/zoom 60 
 #
 # Re-establish auto refreshing and verbosity:
 /vis/viewer/set/autoRefresh true
@@ -215,7 +216,7 @@
 
 #/gun/particle e- 
 #/gun/particle gamma 
-#/gun/particle mu- 
 /gun/particle proton 
+/gun/particle mu- 
 /gun/energy 100 GeV
-/run/beamOn 1
+#/run/beamOn 1
