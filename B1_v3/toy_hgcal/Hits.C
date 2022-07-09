@@ -13,14 +13,14 @@ void Hits::Loop()
     Long64_t nbytes = 0, nb = 0;
     for (Long64_t jentry=0; jentry<nentries;jentry++) {
         Long64_t ientry = LoadTree(jentry);
-        if (ientry < 0) break;
-        nb = fChain->GetEntry(jentry);   nbytes += nb;
+        if (ientry < 0) break; nb = fChain->GetEntry(jentry); nbytes += nb;
 
         reset_containers();
-
         h_nHits->Fill(Hits_DetX_mm->size());
         for(unsigned int ihit=0; ihit<Hits_DetX_mm->size(); ++ihit) {
-            // if (Cut(ientry) < 0) continue;
+            // condition for nominal / forward / backward hits
+            if( !pass_hit_type(ihit) ) continue;
+
             // raw info
             double x = Hits_DetX_mm  -> at(ihit);
             double y = Hits_DetY_mm  -> at(ihit);

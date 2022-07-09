@@ -15,7 +15,8 @@
 #include <TCanvas.h>
 
 // Header file for the classes stored in the TTree if any.
-#include "vector"
+#include <vector>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -38,6 +39,7 @@ class Hits {
         vector<double>  *Hits_DetZ_mm;
         vector<double>  *Hits_DetE_keV;
         vector<int>     *Hits_DetID;
+        vector<int>     *Hits_isForward;
 
         // List of branches
         TBranch        *b_evtNo;   //!
@@ -51,13 +53,14 @@ class Hits {
         TBranch        *b_Hits_DetZ_mm;   //!
         TBranch        *b_Hits_DetE_keV;   //!
         TBranch        *b_Hits_DetID;   //!
+        TBranch        *b_Hits_isForward;   //!
 
-        Hits(TTree *tree=0, TString input="");
+        Hits(TTree *tree=0, TString type="nominal");
         virtual ~Hits();
         virtual Int_t    Cut(Long64_t entry);
         virtual Int_t    GetEntry(Long64_t entry);
         virtual Long64_t LoadTree(Long64_t entry);
-        virtual void     Init(TTree *tree, TString input);
+        virtual void     Init(TTree *tree, TString type);
         virtual void     Loop();
         virtual Bool_t   Notify();
         virtual void     Show(Long64_t entry = -1);
@@ -67,8 +70,11 @@ class Hits {
         virtual int      get_layer(double z);
         virtual void     reset_containers();
         virtual void     print_containers();
+        virtual bool     pass_hit_type(unsigned int ihit);
 
     private:
+        TString myHitType;
+
         TCanvas *c1;
         TFile *fout;
         TH1D *h_Hits_DetX_mm;
@@ -78,6 +84,10 @@ class Hits {
         TH1D *h_nHits;
         TH1D *h_Edep_odd;
         TH1D *h_Edep_even;
+        //TH1D *h_Edep_odd_forward;
+        //TH1D *h_Edep_even_forward;
+        //TH1D *h_Edep_odd_backward;
+        //TH1D *h_Edep_even_backward;
 
         vector<int> vc_nHits;
         vector<double> vc_Edep; // MeV
@@ -85,24 +95,24 @@ class Hits {
 
         vector<TH1D*> vh_nHits;
         vector<TH1D*> vh_Edep;
+        //vector<TH1D*> vh_nHits_forward;
+        //vector<TH1D*> vh_Edep_forward;
+        //vector<TH1D*> vh_nHits_backward;
+        //vector<TH1D*> vh_Edep_backward;
 };
 
 #endif
 
 #ifdef Hits_cxx
-Hits::Hits(TTree *tree, TString input) : fChain(0) 
+Hits::Hits(TTree *tree, TString type) : fChain(0) 
 {
     // if parameter tree is not specified (or zero), connect the file
     // used to generate this class and read the Tree.
     if (tree == 0) {
-        TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("output_equal_lead_plate.root");
-        if (!f || !f->IsOpen()) {
-            f = new TFile("output_equal_lead_plate.root");
-        }
-        f->GetObject("Hits",tree);
-
+        printf("[ERROR] Please check input file in examine.cpp\n");
+        exit(1);
     }
-    Init(tree, input);
+    Init(tree, type);
 }
 
 Hits::~Hits()
@@ -130,7 +140,7 @@ Long64_t Hits::LoadTree(Long64_t entry)
     return centry;
 }
 
-void Hits::Init(TTree *tree, TString input)
+void Hits::Init(TTree *tree, TString type)
 {
     // The Init() function is called when the selector needs to initialize
     // a new tree or chain. Typically here the branch addresses and branch
@@ -140,12 +150,15 @@ void Hits::Init(TTree *tree, TString input)
     // Init() will be called many times when running on PROOF
     // (once per file to be processed).
 
+    myHitType = type;
+
     // Set object pointer
     Hits_DetX_mm = 0;
     Hits_DetY_mm = 0;
     Hits_DetZ_mm = 0;
     Hits_DetE_keV = 0;
     Hits_DetID = 0;
+    Hits_isForward = 0;
     // Set branch addresses and branch pointers
     if (!tree) return;
     fChain = tree;
@@ -163,6 +176,7 @@ void Hits::Init(TTree *tree, TString input)
     fChain->SetBranchAddress("Hits_DetZ_mm", &Hits_DetZ_mm, &b_Hits_DetZ_mm);
     fChain->SetBranchAddress("Hits_DetE_keV", &Hits_DetE_keV, &b_Hits_DetE_keV);
     fChain->SetBranchAddress("Hits_DetID", &Hits_DetID, &b_Hits_DetID);
+    fChain->SetBranchAddress("Hits_isForward", &Hits_isForward, &b_Hits_isForward);
 
     c1 = new TCanvas("c1", "", 800, 600);
     c1->SetTicks(1,1);
@@ -175,8 +189,8 @@ void Hits::Init(TTree *tree, TString input)
     h_nHits         = new TH1D("h_nHits", "", 100, 16000, 32000);
 
     // for evaluating sigma_E/E
-    h_Edep_odd      = new TH1D("h_Edep_odd" , "", 50, 400, 900);
-    h_Edep_even     = new TH1D("h_Edep_even", "", 50, 400, 900);
+    h_Edep_odd      = new TH1D("h_Edep_odd" , "", 200, 0, 2000);
+    h_Edep_even     = new TH1D("h_Edep_even", "", 200, 0, 2000);
 
     // two elements
     vc_Edep_odd_even.push_back(0.);
@@ -294,6 +308,30 @@ void Hits::print_containers()
         if(i+1==26) printf("%.2f\n", vc_Edep[i]);
         else printf("%.2f, ", vc_Edep[i]);
     }
+}
+
+bool Hits::pass_hit_type(unsigned int ihit)
+{
+    bool pass = false;
+
+    if(myHitType == "nominal" || myHitType == "forward_hits" || myHitType == "backward_hits") {
+        // pass basic check of myHitType
+    } else {
+        printf("[ERROR] myHitType is not an exepcted TString.\n");
+        exit(1);
+    }
+
+    if(myHitType == "forward_hits" && Hits_isForward->at(ihit)) {
+        pass = true;
+    } else if(myHitType == "backward_hits" && !Hits_isForward->at(ihit)) {
+        pass = true;
+    } else if(myHitType == "nominal") {
+        pass = true;
+    } else {
+        pass = false;
+    }
+
+    return pass;
 }
 
 #endif // #ifdef Hits_cxx

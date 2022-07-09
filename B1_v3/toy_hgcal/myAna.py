@@ -247,7 +247,7 @@ def make_simple_plot():
             latex.DrawLatex( 0.60, 0.60, "#sigma#left(E_{even}#right) / #bar{E}_{even} = %.4f" % sigmaEoverE[1] )
 
         annotate()
-        output = specified_directory + "/" + "h_Edep_odd_even_" + tags[i] + ".pdf"
+        output = specified_directory + "/" + "h_Edep_odd_even_" + tags[i]
         c1.SaveAs(output + ".pdf")
 
 #--------------------------------------------------
@@ -268,6 +268,13 @@ def run(myfin, mydin):
 if __name__ == "__main__":
     myRootfiles, specified_directory, label = [], "", {}
     colors = [ROOT.kBlack, ROOT.kRed, ROOT.kGreen+2, ROOT.kMagenta, ROOT.kBlue-7, ROOT.kRed-7]
+
+    tags = ["all_hits", "forward_hits", "backward_hits"]
+    layer_depth_types = ["uniform", "uniform", "uniform"]
+    for tag in tags: label[tag] = tag
+    run( m.input_files["backwardHits"]    , eos + "/" + "longitudinal_profile_backward_hit_study" )
+
+    exit()
 
     tags = ["uniform_layers", "with_PCB_before", "with_PCB_after"]
     layer_depth_types = ["uniform", "uniform", "uniform"]
