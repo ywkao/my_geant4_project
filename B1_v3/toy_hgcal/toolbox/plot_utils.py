@@ -72,3 +72,24 @@ def get_graph_from_list(varName, lx, ly, ley, normalize_to_unity = False):
     return gr
 
 
+def record_fit_result(func):
+    #global d_fit_const, d_fit_mean, d_fit_sigma
+
+    fit_const = func.GetParameter(0)
+    fit_mean  = func.GetParameter(1)
+    fit_sigma = func.GetParameter(2)
+    fitError_const = func.GetParError(0)
+    fitError_mean  = func.GetParError(1)
+    fitError_sigma = func.GetParError(2)
+
+    return fit_mean, fit_sigma
+
+    print ">>> result:", fit_const, fit_mean, fit_sigma 
+    print ">>> fit error:", fitError_const, fitError_mean, fitError_sigma 
+    
+    #d_fit_const["central"].append( func.GetParameter(0) )
+    #d_fit_mean ["central"].append( func.GetParameter(1) )
+    #d_fit_sigma["central"].append( func.GetParameter(2) )
+    #d_fit_const[ "error" ].append( func.GetParError(0)  )
+    #d_fit_mean [ "error" ].append( func.GetParError(1)  )
+    #d_fit_sigma[ "error" ].append( func.GetParError(2)  )

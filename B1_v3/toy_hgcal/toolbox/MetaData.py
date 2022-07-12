@@ -9,8 +9,8 @@ input_files = {
 
         "rootfiles/result_geometryType_0_run3_electron_nominal.root",
         "rootfiles/result_geometryType_1_run3_electron_nominal.root",
-        "rootfiles/result_geometryType_2_run3_electron_nominal.root",
-        "rootfiles/result_geometryType_3_run3_electron_nominal.root",
+        #"rootfiles/result_geometryType_2_run3_electron_nominal.root",
+        #"rootfiles/result_geometryType_3_run3_electron_nominal.root",
         #"rootfiles/result_geometryType_4_run3_electron_nominal.root",
         #"rootfiles/result_geometryType_5_run3_electron_nominal.root",
     ],

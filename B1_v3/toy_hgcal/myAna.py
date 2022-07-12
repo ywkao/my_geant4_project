@@ -168,7 +168,7 @@ def make_plot(varName, bool_make_logitudinal_profile):
 
                 if i==0:
                     gr.Draw("alp")
-                    gr.SetMaximum(max_value *1.5)
+                    #gr.SetMaximum(max_value *1.5)
                 else:
                     gr.Draw('lp;same')
 
@@ -215,43 +215,72 @@ def make_simple_plot():
 
     c1.cd()
     for i, v_hists in enumerate(v_v_hists):
+        print ">>> check:", i
+        sigmaEoverE = []
         max_values = []
         max_values.append(v_hists[0].GetMaximum())
         max_values.append(v_hists[1].GetMaximum())
         max_value = max(max_values)
 
         # Edep odd layers
+        v_hists[0].SetTitle("")
+        v_hists[0].GetXaxis().SetRangeUser(xRanges[i][0], xRanges[i][1])
         v_hists[0].GetXaxis().SetTitleOffset(1.1)
         v_hists[0].GetXaxis().SetTitle("Deposited energy [MeV]")
         v_hists[0].GetYaxis().SetTitle("Entries / 10 MeV")
         v_hists[0].SetMaximum(max_value*1.2)
-        v_hists[0].SetStats(0)
+        #v_hists[0].SetStats(0)
         v_hists[0].SetLineWidth(2)
         v_hists[0].SetLineColor(ROOT.kBlue)
+        v_hists[0].Fit("gaus", "0", "", fitRanges[0][i][0], fitRanges[0][i][1])
         v_hists[0].Draw()
+        v_hists[0].GetFunction("gaus").Draw("same")
+        lof = v_hists[0].GetListOfFunctions()
+        fit_mean, fit_sigma = pu.record_fit_result( lof.FindObject("gaus") )
+        sigmaEoverE.append(fit_sigma/fit_mean)
+
+        #stat0 = lof.FindObject("stats")
+        #stat0.GetName()
+        #stat0.SetX1NDC(0.60)
+        #stat0.SetY1NDC(0.65)
+        #stat0.SetX2NDC(0.90)
+        #stat0.SetY2NDC(0.90)
+        #stat0.SetTextColor(ROOT.kBlue)
 
         # Edep even layers
-        v_hists[1].SetStats(0)
+        v_hists[1].SetTitle("")
+        v_hists[1].GetXaxis().SetRangeUser(xRanges[i][0], xRanges[i][1])
+        #v_hists[1].SetStats(0)
         v_hists[1].SetLineWidth(2)
-        v_hists[1].SetLineColor(ROOT.kRed)
+        v_hists[1].SetLineColor(ROOT.kBlack)
+        v_hists[1].Fit("gaus", "0", "", fitRanges[1][i][0], fitRanges[1][i][1])
         v_hists[1].Draw("same")
+        v_hists[1].GetFunction("gaus").Draw("same")
+        lof = v_hists[1].GetListOfFunctions()
+        fit_mean, fit_sigma = pu.record_fit_result( lof.FindObject("gaus") )
+        sigmaEoverE.append(fit_sigma/fit_mean)
 
-        if v_hists[0].GetMean() > 0. and v_hists[1].GetMean() > 0.:
-            latex = ROOT.TLatex()
-            latex.SetNDC()
-            latex.SetTextFont(43)
-            latex.SetTextAlign(11)
-            latex.SetTextSize(24)
+        #stat1 = lof.FindObject("stats")
+        #stat1.GetName()
+        #stat1.SetX1NDC(0.60)
+        #stat1.SetY1NDC(0.40)
+        #stat1.SetX2NDC(0.90)
+        #stat1.SetY2NDC(0.65)
+        #stat1.SetTextColor(ROOT.kBlack)
 
-            sigmaEoverE = []
-            sigmaEoverE.append( v_hists[0].GetStdDev() / v_hists[0].GetMean() )
-            sigmaEoverE.append( v_hists[1].GetStdDev() / v_hists[1].GetMean() )
+        # result
+        latex = ROOT.TLatex()
+        latex.SetNDC()
+        latex.SetTextFont(43)
+        latex.SetTextAlign(11)
+        latex.SetTextSize(24)
 
-            latex.SetTextColor(ROOT.kBlue)
-            latex.DrawLatex( 0.60, 0.70, "#sigma#left(E_{odd}#right) / #bar{E}_{odd} = %.4f" % sigmaEoverE[0] )
-            latex.SetTextColor(ROOT.kRed)
-            latex.DrawLatex( 0.60, 0.60, "#sigma#left(E_{even}#right) / #bar{E}_{even} = %.4f" % sigmaEoverE[1] )
+        latex.SetTextColor(ROOT.kBlue)
+        latex.DrawLatex( xLatexs[i], 0.30, "#sigma#left(E_{odd}#right) / #bar{E}_{odd} = %.4f" % sigmaEoverE[0] )
+        latex.SetTextColor(ROOT.kBlack)
+        latex.DrawLatex( xLatexs[i], 0.20, "#sigma#left(E_{even}#right) / #bar{E}_{even} = %.4f" % sigmaEoverE[1] )
 
+        c1.Update()
         annotate()
         output = specified_directory + "/" + "h_Edep_odd_even_" + tags[i]
         c1.SaveAs(output + ".pdf")
@@ -274,6 +303,29 @@ def run(myfin, mydin):
 if __name__ == "__main__":
     myRootfiles, specified_directory, label = [], "", {}
 
+    xLatexs = [0.20, 0.55]
+    xRanges = [[400, 1200], [400, 1200]]
+    fitRanges = [
+            [ [600, 700], [600, 700] ], # odd
+            [ [600, 700], [600, 700] ]  # even
+    ]
+
+    colors = [ROOT.kBlack, ROOT.kBlue]
+    tags = ["uniform_layers", "alternative_thickness"]
+    layer_depth_types = ["uniform", "alternative"]
+    for tag in tags: label[tag] = tag
+    run( m.input_files["toy_detector"], eos + "/" + "longitudinal_profile" )
+
+    exit()
+
+    colors = [ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kGreen+2, ROOT.kMagenta, ROOT.kBlue-7, ROOT.kRed-7]
+    tags = ["uniform_layers", "alternative_thickness", "with_PCB_before", "with_PCB_after"]
+    layer_depth_types = ["uniform", "alternative", "uniform", "uniform"]
+    for tag in tags: label[tag] = tag
+    run( m.input_files["toy_detector"], eos + "/" + "longitudinal_profile" )
+
+    exit()
+
     colors = [ROOT.kBlack, ROOT.kRed, ROOT.kGreen+2, ROOT.kMagenta, ROOT.kBlue-7, ROOT.kRed-7]
     tags = ["all_hits", "forward_hits", "backward_hits"]
     layer_depth_types = ["alternative", "alternative", "alternative"]
@@ -291,9 +343,3 @@ if __name__ == "__main__":
     layer_depth_types = ["uniform", "alternative", "PCB_by_Lead_before", "PCB_by_Lead_after"]
     for tag in tags: label[tag] = tag
     run( m.input_files["replace_PCB_by_Lead"], eos + "/" + "longitudinal_profile_replace_PCB_by_lead_v2" )
-
-    colors = [ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kGreen+2, ROOT.kMagenta, ROOT.kBlue-7, ROOT.kRed-7]
-    tags = ["uniform_layers", "alternative_thickness", "with_PCB_before", "with_PCB_after"]
-    layer_depth_types = ["uniform", "alternative", "uniform", "uniform"]
-    for tag in tags: label[tag] = tag
-    run( m.input_files["toy_detector"], eos + "/" + "longitudinal_profile" )
