@@ -35,6 +35,12 @@ c2.Divide(7,4)
 X0 = {
 "uniform" : [1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.,13.,14.,15.,16.,17.,18.,19.,20.,21.,22.,23.,24.,25.,26.],
 "alternative" : [0.564,1.567,2.547,3.549,4.528,5.531,6.509,7.512,8.49,9.493,10.472,11.474,12.453,13.455,14.434,15.437,16.415,17.418,18.975,19.978,21.536,22.538,24.096,25.099,26.656,27.659],
+"PCB_by_Lead_before": [
+1.2851,2.2851,3.5702,4.5702,5.8553,6.8553,8.1404,9.1404,10.4255,11.4255,12.7106,13.7106,14.9957,15.9957,17.2808,18.2808,19.5659,20.5659,21.851,22.851,24.1361,25.1361,26.4212,27.4212,28.7063,29.7063
+],
+"PCB_by_Lead_after": [
+1.0,2.2851,3.2851,4.5702,5.5702,6.8553,7.8553,9.1404,10.1404,11.4255,12.4255,13.7106,14.7106,15.9957,16.9957,18.2808,19.2808,20.5659,21.5659,22.851,23.851,25.1361,26.1361,27.4212,28.4212,29.7063
+],
 }
 
 #--------------------------------------------------
@@ -267,24 +273,24 @@ def run(myfin, mydin):
 
 if __name__ == "__main__":
     myRootfiles, specified_directory, label = [], "", {}
+
     colors = [ROOT.kBlack, ROOT.kRed, ROOT.kGreen+2, ROOT.kMagenta, ROOT.kBlue-7, ROOT.kRed-7]
-
     tags = ["all_hits", "forward_hits", "backward_hits"]
-    layer_depth_types = ["uniform", "uniform", "uniform"]
+    layer_depth_types = ["alternative", "alternative", "alternative"]
     for tag in tags: label[tag] = tag
-    run( m.input_files["backwardHits"]    , eos + "/" + "longitudinal_profile_backward_hit_study" )
+    run( m.input_files["backwardHits_v1"]    , eos + "/" + "longitudinal_profile_backward_hit_study" )
+
+    layer_depth_types = ["uniform", "uniform", "uniform"]
+    run( m.input_files["backwardHits_v2"]    , eos + "/" + "longitudinal_profile_backward_hit_study_v2" )
 
     exit()
 
-    tags = ["uniform_layers", "with_PCB_before", "with_PCB_after"]
-    layer_depth_types = ["uniform", "uniform", "uniform"]
+    colors = [ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kGreen+2, ROOT.kMagenta, ROOT.kBlue-7, ROOT.kRed-7]
+    tags = ["uniform_layers", "alternative_thickness", "with_PCB_before", "with_PCB_after"]
+    layer_depth_types = ["uniform", "alternative", "uniform", "uniform"]
+    layer_depth_types = ["uniform", "alternative", "PCB_by_Lead_before", "PCB_by_Lead_after"]
     for tag in tags: label[tag] = tag
-
-    run( m.input_files["muon"]    , eos + "/" + "longitudinal_profile_muon" )
-    run( m.input_files["proton"]  , eos + "/" + "longitudinal_profile_proton" )
-    run( m.input_files["electron"], eos + "/" + "longitudinal_profile_electron" )
-
-    exit()
+    run( m.input_files["replace_PCB_by_Lead"], eos + "/" + "longitudinal_profile_replace_PCB_by_lead_v2" )
 
     colors = [ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kGreen+2, ROOT.kMagenta, ROOT.kBlue-7, ROOT.kRed-7]
     tags = ["uniform_layers", "alternative_thickness", "with_PCB_before", "with_PCB_after"]

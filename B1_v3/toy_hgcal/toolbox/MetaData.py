@@ -2,45 +2,51 @@
 
 input_files = {
     "toy_detector" : [
-        #"rootfiles/result_uniform_layers_26.root",
+        #"rootfiles/result_26_layers_v3.root",
         #"rootfiles/result_alternative_thickness.root",
-        #"rootfiles/result_with_pcb.root",
-        #"rootfiles/result_with_pcb_behind_v2.root",
+        #"rootfiles/result_26_layers_add_pcb_before_odd_active_layers_v3.root",
+        #"rootfiles/result_26_layers_add_pcb_after_odd_active_layers_v3.root",
 
-        "rootfiles/result_26_layers_v3.root",
-        "rootfiles/result_alternative_thickness.root",
-        "rootfiles/result_26_layers_add_pcb_before_odd_active_layers_v3.root",
-        "rootfiles/result_26_layers_add_pcb_after_odd_active_layers_v3.root",
+        "rootfiles/result_geometryType_0_run3_electron_nominal.root",
+        "rootfiles/result_geometryType_1_run3_electron_nominal.root",
+        "rootfiles/result_geometryType_2_run3_electron_nominal.root",
+        "rootfiles/result_geometryType_3_run3_electron_nominal.root",
+        #"rootfiles/result_geometryType_4_run3_electron_nominal.root",
+        #"rootfiles/result_geometryType_5_run3_electron_nominal.root",
     ],
 
-    "electron" : [
-        "rootfiles/result_geometryType_2_run3_electron.root",
-        "rootfiles/result_geometryType_1_run3_electron.root",
-        "rootfiles/result_geometryType_0_run3_electron.root",
+    "replace_PCB_by_Lead" : [
+        "rootfiles/result_geometryType_0_run3_electron_nominal.root",
+        "rootfiles/result_geometryType_1_run3_electron_nominal.root",
+        "rootfiles/result_geometryType_4_run3_electron_nominal.root",
+        "rootfiles/result_geometryType_5_run3_electron_nominal.root",
     ],
 
-    "muon" : [
-        "rootfiles/result_geometryType_2_run3_muon.root",
-        "rootfiles/result_geometryType_1_run3_muon.root",
-        "rootfiles/result_geometryType_0_run3_muon.root",
-    ],
-
-    "proton" : [
-        "rootfiles/result_geometryType_2_run3_proton.root",
-        "rootfiles/result_geometryType_1_run3_proton.root",
-        "rootfiles/result_geometryType_0_run3_proton.root",
-    ],
-
-    "backwardHits" : [
-        #"rootfiles/result_geometryType_0_run3_electron_nominal.root",
-        #"rootfiles/result_geometryType_0_run3_electron_forward_hits.root",
+    "backwardHits_v1" : [
         #"rootfiles/result_geometryType_0_run3_electron_backward_hits.root",
+        #"rootfiles/result_geometryType_0_run3_electron_forward_hits.root",
+        #"rootfiles/result_geometryType_0_run3_electron_nominal.root",
         "rootfiles/result_geometryType_1_run3_electron_nominal.root",
         "rootfiles/result_geometryType_1_run3_electron_forward_hits.root",
         "rootfiles/result_geometryType_1_run3_electron_backward_hits.root",
         #"rootfiles/result_geometryType_2_run3_electron_nominal.root",
         #"rootfiles/result_geometryType_2_run3_electron_forward_hits.root",
         #"rootfiles/result_geometryType_2_run3_electron_backward_hits.root",
+        #"rootfiles/result_geometryType_3_run3_electron_backward_hits.root",
+        #"rootfiles/result_geometryType_3_run3_electron_forward_hits.root",
+        #"rootfiles/result_geometryType_3_run3_electron_nominal.root",
+        #"rootfiles/result_geometryType_4_run3_electron_backward_hits.root",
+        #"rootfiles/result_geometryType_4_run3_electron_forward_hits.root",
+        #"rootfiles/result_geometryType_4_run3_electron_nominal.root",
+        #"rootfiles/result_geometryType_5_run3_electron_backward_hits.root",
+        #"rootfiles/result_geometryType_5_run3_electron_forward_hits.root",
+        #"rootfiles/result_geometryType_5_run3_electron_nominal.root",
+    ],
+
+    "backwardHits_v2" : [
+        "rootfiles/result_geometryType_2_run3_electron_nominal.root",
+        "rootfiles/result_geometryType_2_run3_electron_forward_hits.root",
+        "rootfiles/result_geometryType_2_run3_electron_backward_hits.root",
     ],
 }
 
