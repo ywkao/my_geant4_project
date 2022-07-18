@@ -159,9 +159,9 @@ def make_plot(varName, bool_make_logitudinal_profile):
         # logitudinal profile
         #------------------------------
         c1.cd()
-        legend = ROOT.TLegend(0.60, 0.72, 0.85, 0.85)
+        legend = ROOT.TLegend(0.55, 0.65, 0.85, 0.85)
         legend.SetLineColor(0)
-        legend.SetTextSize(0.03)
+        legend.SetTextSize(0.042)
         for i, gr in enumerate(v_gr):
 
             if not flag_add_reference:
@@ -215,14 +215,16 @@ def make_simple_plot():
 
     c1.cd()
     for i, v_hists in enumerate(v_v_hists):
-        print ">>> check:", i
+        print "\n----------------------------------------------------------------------------------------------------\n"
         sigmaEoverE = []
         max_values = []
         max_values.append(v_hists[0].GetMaximum())
         max_values.append(v_hists[1].GetMaximum())
         max_value = max(max_values)
 
+        #--------------------------------------------------
         # Edep odd layers
+        #--------------------------------------------------
         v_hists[0].SetTitle("")
         v_hists[0].GetXaxis().SetRangeUser(xRanges[i][0], xRanges[i][1])
         v_hists[0].GetXaxis().SetTitleOffset(1.1)
@@ -235,19 +237,27 @@ def make_simple_plot():
         v_hists[0].Fit("gaus", "0", "", fitRanges[0][i][0], fitRanges[0][i][1])
         v_hists[0].Draw()
         v_hists[0].GetFunction("gaus").Draw("same")
+
+        c1.Update()
         lof = v_hists[0].GetListOfFunctions()
         fit_mean, fit_sigma = pu.record_fit_result( lof.FindObject("gaus") )
         sigmaEoverE.append(fit_sigma/fit_mean)
 
-        #stat0 = lof.FindObject("stats")
-        #stat0.GetName()
-        #stat0.SetX1NDC(0.60)
-        #stat0.SetY1NDC(0.65)
-        #stat0.SetX2NDC(0.90)
-        #stat0.SetY2NDC(0.90)
-        #stat0.SetTextColor(ROOT.kBlue)
+        stat0 = lof.FindObject("stats")
+        if stat0:
+            print ">>>>> check:", stat0.GetName()
+            stat0.GetName()
+            stat0.SetX1NDC(0.60)
+            stat0.SetY1NDC(0.65)
+            stat0.SetX2NDC(0.90)
+            stat0.SetY2NDC(0.90)
+            stat0.SetTextColor(ROOT.kBlue)
+        else:
+            print ">>>>> stat0 is null"
 
+        #--------------------------------------------------
         # Edep even layers
+        #--------------------------------------------------
         v_hists[1].SetTitle("")
         v_hists[1].GetXaxis().SetRangeUser(xRanges[i][0], xRanges[i][1])
         #v_hists[1].SetStats(0)
@@ -256,17 +266,22 @@ def make_simple_plot():
         v_hists[1].Fit("gaus", "0", "", fitRanges[1][i][0], fitRanges[1][i][1])
         v_hists[1].Draw("same")
         v_hists[1].GetFunction("gaus").Draw("same")
+
         lof = v_hists[1].GetListOfFunctions()
         fit_mean, fit_sigma = pu.record_fit_result( lof.FindObject("gaus") )
         sigmaEoverE.append(fit_sigma/fit_mean)
 
-        #stat1 = lof.FindObject("stats")
-        #stat1.GetName()
-        #stat1.SetX1NDC(0.60)
-        #stat1.SetY1NDC(0.40)
-        #stat1.SetX2NDC(0.90)
-        #stat1.SetY2NDC(0.65)
-        #stat1.SetTextColor(ROOT.kBlack)
+        c1.Update()
+        stat1 = lof.FindObject("stats")
+        if stat1:
+            stat1.GetName()
+            stat1.SetX1NDC(0.60)
+            stat1.SetY1NDC(0.40)
+            stat1.SetX2NDC(0.90)
+            stat1.SetY2NDC(0.65)
+            stat1.SetTextColor(ROOT.kBlack)
+        else:
+            print ">>>>> stat1 is null"
 
         # result
         latex = ROOT.TLatex()
@@ -303,7 +318,22 @@ def run(myfin, mydin):
 if __name__ == "__main__":
     myRootfiles, specified_directory, label = [], "", {}
 
-    xLatexs = [0.20, 0.55]
+    xLatexs = [0.55, 0.55]
+    xRanges = [[400, 1200], [400, 1200]]
+    fitRanges = [
+            [ [0, 2000], [500, 600] ], # odd
+            [ [0, 2000], [580, 680] ]  # even
+    ]
+
+    colors = [ROOT.kBlack, ROOT.kRed]
+    tags = ["uniform_layers", "with_PCB_before"]
+    layer_depth_types = ["uniform", "uniform"]
+    for tag in tags: label[tag] = tag
+    run( m.input_files["toy_detector_v2"], eos + "/" + "longitudinal_profile_v2" )
+
+    exit()
+
+    xLatexs = [0.55, 0.55]
     xRanges = [[400, 1200], [400, 1200]]
     fitRanges = [
             [ [600, 700], [600, 700] ], # odd
@@ -317,6 +347,8 @@ if __name__ == "__main__":
     run( m.input_files["toy_detector"], eos + "/" + "longitudinal_profile" )
 
     exit()
+
+    #--------------------------------------------------
 
     colors = [ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kGreen+2, ROOT.kMagenta, ROOT.kBlue-7, ROOT.kRed-7]
     tags = ["uniform_layers", "alternative_thickness", "with_PCB_before", "with_PCB_after"]

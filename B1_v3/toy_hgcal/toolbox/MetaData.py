@@ -2,14 +2,18 @@
 
 input_files = {
     "toy_detector" : [
-        #"rootfiles/result_26_layers_v3.root",
-        #"rootfiles/result_alternative_thickness.root",
-        #"rootfiles/result_26_layers_add_pcb_before_odd_active_layers_v3.root",
-        #"rootfiles/result_26_layers_add_pcb_after_odd_active_layers_v3.root",
-
         "rootfiles/result_geometryType_0_run3_electron_nominal.root",
         "rootfiles/result_geometryType_1_run3_electron_nominal.root",
         #"rootfiles/result_geometryType_2_run3_electron_nominal.root",
+        #"rootfiles/result_geometryType_3_run3_electron_nominal.root",
+        #"rootfiles/result_geometryType_4_run3_electron_nominal.root",
+        #"rootfiles/result_geometryType_5_run3_electron_nominal.root",
+    ],
+
+    "toy_detector_v2" : [
+        "rootfiles/result_geometryType_0_run3_electron_nominal.root",
+        #"rootfiles/result_geometryType_1_run3_electron_nominal.root",
+        "rootfiles/result_geometryType_2_run3_electron_nominal.root",
         #"rootfiles/result_geometryType_3_run3_electron_nominal.root",
         #"rootfiles/result_geometryType_4_run3_electron_nominal.root",
         #"rootfiles/result_geometryType_5_run3_electron_nominal.root",

@@ -29,8 +29,10 @@ def set_graph(gr, ytitle, xtitle, color):
     gr.SetMarkerColor(color)
     gr.SetMinimum(0)
     gr.GetXaxis().SetTitle(xtitle)
+    gr.GetXaxis().SetTitleSize(0.042)
+    gr.GetXaxis().SetTitleOffset(1.0)
     gr.GetYaxis().SetTitle(ytitle)
-    gr.GetXaxis().SetTitleOffset(1.2)
+    gr.GetYaxis().SetTitleSize(0.042)
 
 sub_directory = {
     "h_nHits" : "h_nHits",
