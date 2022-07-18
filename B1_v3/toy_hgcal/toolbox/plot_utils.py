@@ -95,3 +95,18 @@ def record_fit_result(func):
     #d_fit_const[ "error" ].append( func.GetParError(0)  )
     #d_fit_mean [ "error" ].append( func.GetParError(1)  )
     #d_fit_sigma[ "error" ].append( func.GetParError(2)  )
+
+def set_stat_pad(stat, positions, color):
+    if stat:
+        print ">>>>> check:", stat.GetName()
+        stat.GetName()
+        stat.SetX1NDC(positions[0])
+        stat.SetY1NDC(positions[1])
+        stat.SetX2NDC(positions[2])
+        stat.SetY2NDC(positions[3])
+        stat.SetTextSize(0.02)
+        stat.SetTextColor(color)
+        stat.SetLineColor(color)
+    else:
+        print ">>>>> stat is null"
+

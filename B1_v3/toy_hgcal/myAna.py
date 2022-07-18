@@ -226,14 +226,13 @@ def make_simple_plot():
         # Edep odd layers
         #--------------------------------------------------
         v_hists[0].SetTitle("")
+        v_hists[0].SetMaximum(max_value*1.2)
+        v_hists[0].SetLineWidth(2)
+        v_hists[0].SetLineColor(ROOT.kBlue)
         v_hists[0].GetXaxis().SetRangeUser(xRanges[i][0], xRanges[i][1])
         v_hists[0].GetXaxis().SetTitleOffset(1.1)
         v_hists[0].GetXaxis().SetTitle("Deposited energy [MeV]")
         v_hists[0].GetYaxis().SetTitle("Entries / 10 MeV")
-        v_hists[0].SetMaximum(max_value*1.2)
-        #v_hists[0].SetStats(0)
-        v_hists[0].SetLineWidth(2)
-        v_hists[0].SetLineColor(ROOT.kBlue)
         v_hists[0].Fit("gaus", "0", "", fitRanges[0][i][0], fitRanges[0][i][1])
         v_hists[0].Draw()
         v_hists[0].GetFunction("gaus").Draw("same")
@@ -242,46 +241,31 @@ def make_simple_plot():
         lof = v_hists[0].GetListOfFunctions()
         fit_mean, fit_sigma = pu.record_fit_result( lof.FindObject("gaus") )
         sigmaEoverE.append(fit_sigma/fit_mean)
-
-        stat0 = lof.FindObject("stats")
-        if stat0:
-            print ">>>>> check:", stat0.GetName()
-            stat0.GetName()
-            stat0.SetX1NDC(0.60)
-            stat0.SetY1NDC(0.65)
-            stat0.SetX2NDC(0.90)
-            stat0.SetY2NDC(0.90)
-            stat0.SetTextColor(ROOT.kBlue)
-        else:
-            print ">>>>> stat0 is null"
+        pu.set_stat_pad( lof.FindObject("stats"), [0.60, 0.66, 0.88, 0.86], ROOT.kBlue )
 
         #--------------------------------------------------
         # Edep even layers
         #--------------------------------------------------
         v_hists[1].SetTitle("")
-        v_hists[1].GetXaxis().SetRangeUser(xRanges[i][0], xRanges[i][1])
-        #v_hists[1].SetStats(0)
+        v_hists[1].SetMaximum(max_value*1.2)
         v_hists[1].SetLineWidth(2)
-        v_hists[1].SetLineColor(ROOT.kBlack)
+        v_hists[1].SetLineColor(ROOT.kGreen+3)
+        v_hists[1].GetXaxis().SetRangeUser(xRanges[i][0], xRanges[i][1])
+        v_hists[1].GetXaxis().SetTitleOffset(1.1)
+        v_hists[1].GetXaxis().SetTitle("Deposited energy [MeV]")
+        v_hists[1].GetYaxis().SetTitle("Entries / 10 MeV")
         v_hists[1].Fit("gaus", "0", "", fitRanges[1][i][0], fitRanges[1][i][1])
-        v_hists[1].Draw("same")
+        v_hists[1].Draw() # to get stat
         v_hists[1].GetFunction("gaus").Draw("same")
 
+        c1.Update()
         lof = v_hists[1].GetListOfFunctions()
         fit_mean, fit_sigma = pu.record_fit_result( lof.FindObject("gaus") )
         sigmaEoverE.append(fit_sigma/fit_mean)
+        pu.set_stat_pad( lof.FindObject("stats"), [0.60, 0.42, 0.88, 0.62], ROOT.kGreen+3 )
 
-        c1.Update()
-        stat1 = lof.FindObject("stats")
-        if stat1:
-            stat1.GetName()
-            stat1.SetX1NDC(0.60)
-            stat1.SetY1NDC(0.40)
-            stat1.SetX2NDC(0.90)
-            stat1.SetY2NDC(0.65)
-            stat1.SetTextColor(ROOT.kBlack)
-        else:
-            print ">>>>> stat1 is null"
+        v_hists[0].Draw("same")
+        v_hists[0].GetFunction("gaus").Draw("same")
 
         # result
         latex = ROOT.TLatex()
@@ -292,7 +276,7 @@ def make_simple_plot():
 
         latex.SetTextColor(ROOT.kBlue)
         latex.DrawLatex( xLatexs[i], 0.30, "#sigma#left(E_{odd}#right) / #bar{E}_{odd} = %.4f" % sigmaEoverE[0] )
-        latex.SetTextColor(ROOT.kBlack)
+        latex.SetTextColor(ROOT.kGreen+3)
         latex.DrawLatex( xLatexs[i], 0.20, "#sigma#left(E_{even}#right) / #bar{E}_{even} = %.4f" % sigmaEoverE[1] )
 
         c1.Update()
