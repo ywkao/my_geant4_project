@@ -216,7 +216,8 @@ def make_simple_plot():
     c1.cd()
     for i, v_hists in enumerate(v_v_hists):
         print "\n----------------------------------------------------------------------------------------------------\n"
-        sigmaEoverE = []
+        pu.reset_containers()
+        print ">>> check1:", pu.sigmaEoverE
         max_values = []
         max_values.append(v_hists[0].GetMaximum())
         max_values.append(v_hists[1].GetMaximum())
@@ -239,9 +240,9 @@ def make_simple_plot():
 
         c1.Update()
         lof = v_hists[0].GetListOfFunctions()
-        fit_mean, fit_sigma = pu.record_fit_result( lof.FindObject("gaus") )
-        sigmaEoverE.append(fit_sigma/fit_mean)
+        pu.record_fit_result( lof.FindObject("gaus") )
         pu.set_stat_pad( lof.FindObject("stats"), [0.60, 0.66, 0.88, 0.86], ROOT.kBlue )
+        print ">>> check2:", pu.sigmaEoverE
 
         #--------------------------------------------------
         # Edep even layers
@@ -260,9 +261,9 @@ def make_simple_plot():
 
         c1.Update()
         lof = v_hists[1].GetListOfFunctions()
-        fit_mean, fit_sigma = pu.record_fit_result( lof.FindObject("gaus") )
-        sigmaEoverE.append(fit_sigma/fit_mean)
+        pu.record_fit_result( lof.FindObject("gaus") )
         pu.set_stat_pad( lof.FindObject("stats"), [0.60, 0.42, 0.88, 0.62], ROOT.kGreen+3 )
+        print ">>> check3:", pu.sigmaEoverE
 
         v_hists[0].Draw("same")
         v_hists[0].GetFunction("gaus").Draw("same")
@@ -275,9 +276,9 @@ def make_simple_plot():
         latex.SetTextSize(24)
 
         latex.SetTextColor(ROOT.kBlue)
-        latex.DrawLatex( xLatexs[i], 0.30, "#sigma#left(E_{odd}#right) / #bar{E}_{odd} = %.4f" % sigmaEoverE[0] )
+        latex.DrawLatex( xLatexs[i], 0.30, "#sigma#left(E_{odd}#right) / #bar{E}_{odd} = %.4f" % pu.sigmaEoverE[0] )
         latex.SetTextColor(ROOT.kGreen+3)
-        latex.DrawLatex( xLatexs[i], 0.20, "#sigma#left(E_{even}#right) / #bar{E}_{even} = %.4f" % sigmaEoverE[1] )
+        latex.DrawLatex( xLatexs[i], 0.20, "#sigma#left(E_{even}#right) / #bar{E}_{even} = %.4f" % pu.sigmaEoverE[1] )
 
         c1.Update()
         annotate()

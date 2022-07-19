@@ -74,8 +74,14 @@ def get_graph_from_list(varName, lx, ly, ley, normalize_to_unity = False):
     return gr
 
 
+sigmaEoverE = []
+
+def reset_containers():
+    global sigmaEoverE 
+    sigmaEoverE = []
+
 def record_fit_result(func):
-    #global d_fit_const, d_fit_mean, d_fit_sigma
+    global sigmaEoverE
 
     fit_const = func.GetParameter(0)
     fit_mean  = func.GetParameter(1)
@@ -84,10 +90,12 @@ def record_fit_result(func):
     fitError_mean  = func.GetParError(1)
     fitError_sigma = func.GetParError(2)
 
-    return fit_mean, fit_sigma
+    sigmaEoverE.append(fit_sigma/fit_mean)
 
-    print ">>> result:", fit_const, fit_mean, fit_sigma 
-    print ">>> fit error:", fitError_const, fitError_mean, fitError_sigma 
+    #return fit_mean, fit_sigma
+
+    #print ">>> result:", fit_const, fit_mean, fit_sigma 
+    #print ">>> fit error:", fitError_const, fitError_mean, fitError_sigma 
     
     #d_fit_const["central"].append( func.GetParameter(0) )
     #d_fit_mean ["central"].append( func.GetParameter(1) )
@@ -98,7 +106,7 @@ def record_fit_result(func):
 
 def set_stat_pad(stat, positions, color):
     if stat:
-        print ">>>>> check:", stat.GetName()
+        #print ">>>>> check:", stat.GetName()
         stat.GetName()
         stat.SetX1NDC(positions[0])
         stat.SetY1NDC(positions[1])
@@ -108,5 +116,6 @@ def set_stat_pad(stat, positions, color):
         stat.SetTextColor(color)
         stat.SetLineColor(color)
     else:
-        print ">>>>> stat is null"
+        #print ">>>>> stat is null"
+        return
 
