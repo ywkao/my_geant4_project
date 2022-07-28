@@ -64,10 +64,15 @@ DetectorConstruction::DetectorConstruction(int type)
     // note for fType
     // 0: nominal
     // 1: alternative
-    // 2: pcb before
-    // 3: pcb after
-    // 4: pcb (lead) before
-    // 5: pcb (lead) after
+    // 2: pcb before odd layers
+    // 3: pcb after odd layers
+    // 4: pcb (lead) before odd layers
+    // 5: pcb (lead) after odd layers
+    // 6: pcb (aluminum) before odd layers
+    // 7: pcb (aluminum) after odd layers
+    // 8: pcb (air) before odd layers
+    // 9: pcb (air) after odd layers
+    // 10: pcb before odd layers & after even layers
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -112,10 +117,15 @@ void DetectorConstruction::DefineMaterials()
   if(fType==4 || fType==5) {
     pcb = nist -> FindOrBuildMaterial("G4_Pb");
     printf(">>>>> [Note] pcb is replaced by lead\n");
+  } else if (fType==6 || fType==7) {
+    pcb = nist -> FindOrBuildMaterial("G4_Al");
+    printf(">>>>> [Note] pcb is replaced by aluminum\n");
+  } else if (fType==8 || fType==9) {
+    pcb = nist -> FindOrBuildMaterial("G4_AIR");
+    printf(">>>>> [Note] pcb is replaced by air\n");
   }
 
   nist -> FindOrBuildMaterial("PCB");
-  nist -> FindOrBuildMaterial("G4_AIR");
 
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
 }
@@ -247,7 +257,9 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
       G4Box *lead_box = new G4Box(name_obj, 0.5*plate_dimension, 0.5*plate_dimension, 0.5*thickness_lead);
       G4LogicalVolume *lead_LV = new G4LogicalVolume(lead_box, fPassiveMaterial, name_log);
 
-      // place pcb before / after each of odd layers
+      //--------------------
+      // odd layers
+      //--------------------
       if(i%2==0) {
         // no pcb
         if(fType==0 || fType==1) {
@@ -256,7 +268,7 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
             new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
 
         // pcb before
-        } else if(fType==2 || fType==4) {
+        } else if(fType==2 || fType==4 || fType==6 || fType==8 || fType==10) {
             name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
             position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_pcb - 0.5*pixel_thick);
             new G4PVPlacement(nullptr, position, pcb_LV, name_vol, tracker_LV, i, fCheckOverlaps);
@@ -266,7 +278,7 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
             new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
 
         // pcb after
-        } else if(fType==3 || fType==5){
+        } else if(fType==3 || fType==5 || fType==7 || fType==9){
             name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
             position = G4ThreeVector(0., 0., locations[i] + 0.5*thickness_pcb + 0.5*pixel_thick);
             new G4PVPlacement(nullptr, position, pcb_LV, name_vol, tracker_LV, i, fCheckOverlaps);
@@ -275,22 +287,43 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
             position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
             new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
 
-        // others
+        // print error messages
         } else {
             printf("[ERROR] fType is not an expected value\n");
-            printf("0: nominal           \n");
-            printf("1: alternative       \n");
-            printf("2: pcb before        \n");
-            printf("3: pcb after         \n");
-            printf("4: pcb (lead) before \n");
-            printf("5: pcb (lead) after  \n");
+            printf("0: nominal                                    \n ");
+            printf("1: alternative                                \n ");
+            printf("2: pcb before odd layers                      \n ");
+            printf("3: pcb after odd layers                       \n ");
+            printf("4: pcb (lead) before odd layers               \n ");
+            printf("5: pcb (lead) after odd layers                \n ");
+            printf("6: pcb (aluminum) before odd layers           \n ");
+            printf("7: pcb (aluminum) after odd layers            \n ");
+            printf("8: pcb (air) before odd layers                \n ");
+            printf("9: pcb (air) after odd layers                 \n ");
+            printf("10: pcb before odd layers & after even layers \n ");
             exit(2);
         }
 
+      //--------------------
+      // even layers
+      //--------------------
       } else {
-        name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
-        position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
-        new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+        // place pcb after even layers
+        if(fType==10) {
+            name_obj="pcb_box"+tag; name_log="pcb_LV"+tag; name_vol="pcb_PV"+tag;
+            position = G4ThreeVector(0., 0., locations[i] + 0.5*thickness_pcb + 0.5*pixel_thick);
+            new G4PVPlacement(nullptr, position, pcb_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+
+            name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
+            position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
+            new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+
+        // no pcb
+        } else {
+            name_obj="lead_box"+tag; name_log="lead_LV"+tag; name_vol="lead_PV"+tag;
+            position = G4ThreeVector(0., 0., locations[i] - 0.5*thickness_lead - 0.5*pixel_thick);
+            new G4PVPlacement(nullptr, position, lead_LV, name_vol, tracker_LV, i, fCheckOverlaps);
+        }
       }
 
       //++++++++++++++++++++++++++++++
