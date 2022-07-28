@@ -74,11 +74,11 @@ def get_graph_from_list(varName, lx, ly, ley, normalize_to_unity = False):
     return gr
 
 
-sigmaEoverE = []
+sigmaEoverE, error_sigmaEoverE = [], []
 
 def reset_containers():
-    global sigmaEoverE 
-    sigmaEoverE = []
+    global sigmaEoverE , error_sigmaEoverE
+    sigmaEoverE, error_sigmaEoverE = [], []
 
 def record_fit_result(func):
     global sigmaEoverE
@@ -90,7 +90,11 @@ def record_fit_result(func):
     fitError_mean  = func.GetParError(1)
     fitError_sigma = func.GetParError(2)
 
-    sigmaEoverE.append(fit_sigma/fit_mean)
+    ratio = fit_sigma/fit_mean
+    uncertainty = ratio * math.sqrt( math.pow(fitError_mean/fit_mean, 2) + math.pow(fitError_sigma/fit_sigma, 2) )
+    
+    sigmaEoverE.append(ratio)
+    error_sigmaEoverE.append(uncertainty)
 
     #return fit_mean, fit_sigma
 

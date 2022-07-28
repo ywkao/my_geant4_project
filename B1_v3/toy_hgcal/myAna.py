@@ -276,9 +276,9 @@ def make_simple_plot():
         latex.SetTextSize(24)
 
         latex.SetTextColor(ROOT.kBlue)
-        latex.DrawLatex( xLatexs[i], 0.30, "#sigma#left(E_{odd}#right) / #bar{E}_{odd} = %.4f" % pu.sigmaEoverE[0] )
+        latex.DrawLatex( 0.45, 0.30, "#sigma#left(E_{odd}#right) / #bar{E}_{odd} = %.4f #pm %.4f" % (pu.sigmaEoverE[0], pu.error_sigmaEoverE[0]) )
         latex.SetTextColor(ROOT.kGreen+3)
-        latex.DrawLatex( xLatexs[i], 0.20, "#sigma#left(E_{even}#right) / #bar{E}_{even} = %.4f" % pu.sigmaEoverE[1] )
+        latex.DrawLatex( 0.45, 0.20, "#sigma#left(E_{even}#right) / #bar{E}_{even} = %.4f #pm %.4f" % (pu.sigmaEoverE[1], pu.error_sigmaEoverE[1]) )
 
         c1.Update()
         annotate()
@@ -316,7 +316,6 @@ if __name__ == "__main__":
     for tag in tags: label[tag] = tag
     run( m.input_files["toy_detector_v2"], eos + "/" + "longitudinal_profile_v2" )
 
-    exit()
 
     xLatexs = [0.55, 0.55]
     xRanges = [[400, 1200], [400, 1200]]
