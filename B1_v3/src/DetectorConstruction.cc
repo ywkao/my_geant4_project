@@ -438,7 +438,7 @@ void DetectorConstruction::ConstructSDandField()
   
   // Create global magnetic field messenger.
   // Uniform magnetic field is then created automatically if the field value is not zero.
-  G4ThreeVector fieldValue = G4ThreeVector(0, 0, 2*tesla);
+  G4ThreeVector fieldValue = G4ThreeVector(0, 0, 3.8*tesla);
   fMagFieldMessenger = new G4GlobalMagFieldMessenger(fieldValue);
   fMagFieldMessenger->SetVerboseLevel(1);
 
